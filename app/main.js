@@ -1,9 +1,9 @@
 const { Emitter } = require('./mixins/common/events')
 const { Video } = require('./classes/video/video')
 
-const _STOPPED = 0
-const _RUNNING = 1
-const _PAUSED = 2
+const STOPPED = 0
+const RUNNING = 1
+const PAUSED = 2
 
 class Main extends Emitter {
 
@@ -32,11 +32,11 @@ class Main extends Emitter {
     }
   }
 
-  get isRunning () { return this._state === _RUNNING }
-  get isPaused () { return this._state === _PAUSED }
+  get isRunning () { return this._state === RUNNING }
+  get isPaused () { return this._state === PAUSED }
 
   reset () {
-    this._state = _STOPPED
+    this._state = STOPPED
     return this
   }
 
@@ -46,7 +46,7 @@ class Main extends Emitter {
 
   start () {
     if (!this.isRunning) {
-      this.state = _RUNNING
+      this.state = RUNNING
       this.emit('start')
     }
     return this
@@ -54,7 +54,7 @@ class Main extends Emitter {
 
   stop () {
     if (this.isRunning) {
-      this.state = _STOPPED
+      this.state = STOPPED
       this.emit('stop')
     }
     return this
@@ -62,7 +62,7 @@ class Main extends Emitter {
 
   pause () {
     if (!this.isPaused) {
-      this.state = _PAUSED
+      this.state = PAUSED
       this.emit('paused')
     }
     return this
@@ -70,7 +70,7 @@ class Main extends Emitter {
 
   resume () {
     if (this.isPaused) {
-      this.state = _RUNNING
+      this.state = RUNNING
       this.emit('resume')
     }
     return this
@@ -89,7 +89,7 @@ class Main extends Emitter {
   }
 
   tick (delta) {
-    if (this.state === _RUNNING) {
+    if (this.state === RUNNING) {
       let t = performance.now()
 
       this._video.tick(t, delta)
