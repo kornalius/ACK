@@ -8,6 +8,8 @@ const StatsMixin = Mixin(superclass => class StatsMixin extends superclass {
 
   clearStats () {
     this._stats = {}
+    this.emit('clear-stats')
+    return this
   }
 
   hasStat (name) {
@@ -17,7 +19,8 @@ const StatsMixin = Mixin(superclass => class StatsMixin extends superclass {
   addStat (name, value) {
     if (!this.hasStat(name)) {
       this._stats[name] = value
-      this.emit('stat-add', { name, value })
+      this.emit('add-stat', { name })
+      this.emit('set-stat', { name, value })
     }
     return this
   }
@@ -25,28 +28,27 @@ const StatsMixin = Mixin(superclass => class StatsMixin extends superclass {
   removeStat (name) {
     if (this.hasStat(name)) {
       delete this._stats[name]
-      this.emit('stat-remove', { name })
+      this.emit('remove-stat', { name })
     }
     return this
   }
 
-  setStat (name, value) {
-    if (this.hasStat(name) && !value) {
-      this.removeStat(name)
-      return true
+  stat (name, value) {
+    if (this.hasStat(name)) {
+      if (!_.isUndefined(value)) {
+        this._stats[name] = value
+        this.emit('set-stat', { name, value })
+      }
+      return this._stats[name]
     }
-    else if (!this.hasStat(name) && value) {
-      this.addStat(name, value)
-      return true
+    else if (!_.isUndefined(value)) {
+      return this.addStat(name, value)
     }
-    return false
+    return undefined
   }
 
   incStat (name, by = 1) {
-    if (this.hasStat(name)) {
-      this._stats[name] += by
-    }
-    return this._stats[name]
+    return this.stat(name, this.stat(name) + by)
   }
 
 })
