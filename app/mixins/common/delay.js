@@ -1,4 +1,4 @@
-const TickMixin = Mixin(superclass => class TickMixin extends superclass {
+const DelayMixin = Mixin(superclass => class DelayMixin extends superclass {
 
   timeout (name, args = [], timeout = 1) {
     let fn = _.isFunction(name) ? name : this[name]
@@ -24,5 +24,5 @@ const TickMixin = Mixin(superclass => class TickMixin extends superclass {
 })
 
 module.exports = {
-  TickMixin,
+  DelayMixin,
 }

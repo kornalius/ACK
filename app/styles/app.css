@@ -8,3 +8,9 @@ body {
   background-color: var(--back-color);
   margin: 0;
 }
+
+* {
+  cursor: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}

@@ -1,12 +1,11 @@
 const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/core/state')
+const { ActMixin } = require('../../mixins/core/act')
 
-class Scheduler extends mix(Object).with(EventsManager, StateMixin) {
+class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
-  constructor (speed = 5) {
+  constructor () {
     super()
-
-    this._tickSpeed = speed
 
     this.reset()
   }
@@ -42,19 +41,17 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin) {
     this.emit('pull', obj)
   }
 
-  tick (t) {
-    if (this.isRunning && t - this._last >= this._tickSpeed) {
-      let c = this._current
-      if (c && t - c.last >= c.duration) {
-        let obj = this._queue.shift()
-        this._current = {
-          obj,
-          duration: obj.act(t) || 0,
-          last: t,
-        }
+  act (t, delta) {
+    let c = this._current
+    if (c && t - c.last >= c.duration) {
+      let obj = this._queue.shift()
+      this._current = {
+        obj,
+        duration: obj.act(t) || 0,
+        last: t,
       }
-      this._last = t
     }
+    this._last = t
   }
 
   destroy () {

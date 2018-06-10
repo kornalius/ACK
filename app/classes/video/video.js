@@ -2,15 +2,17 @@ const { Emitter } = require('../../mixins/common/events')
 
 const VIDEO_WIDTH = 320
 const VIDEO_HEIGHT = 240
-const VIDEO_SCALE = 3
+const VIDEO_SCALE = 4
 
 class Video extends Emitter {
 
   constructor () {
     super()
 
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+
     this._stage = new PIXI.Container()
-    this._renderer = new PIXI.autoDetectRenderer(100, 100, null, { roundPixels: true, autoResize: true })
+    this._renderer = new PIXI.autoDetectRenderer(VIDEO_WIDTH * VIDEO_SCALE, VIDEO_HEIGHT * VIDEO_SCALE, { roundPixels: true })
 
     this._force_update = false
 
@@ -18,7 +20,9 @@ class Video extends Emitter {
     this._height = VIDEO_HEIGHT
     this._scale = VIDEO_SCALE
 
-    this._renderer.resize(this._width * this._scale, this._height * this._scale)
+    this.stage.scale = new PIXI.Point(this._scale, this._scale)
+
+    // this._renderer.resize(this._width * this._scale, this._height * this._scale)
     this._renderer.view.style.position = 'absolute'
     // this._renderer.view.style.top = Math.trunc(this._marginX / 2) + 'px'
     // this._renderer.view.style.left = Math.trunc(this._marginY / 2) + 'px'

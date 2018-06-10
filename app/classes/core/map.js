@@ -1,6 +1,8 @@
-const { Emitter } = require('../../mixins/common/events')
+const { EventsManager } = require('../../mixins/common/events')
+const { StateMixin } = require('../../mixins/core/state')
+const { ActMixin } = require('../../mixins/core/act')
 
-let MapObject = class MapObject extends Emitter {
+let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
     super()
@@ -44,7 +46,7 @@ let MapObject = class MapObject extends Emitter {
     return { tile, objects, npcs, player }
   }
 
-  tick (t, delta) {
+  act (t, delta) {
     for (let t of this._tiles) {
       t.tick(t, delta)
     }
@@ -76,14 +78,16 @@ let MapObject = class MapObject extends Emitter {
     }
   }
 
-  load () {
+  load (cb) {
+    cb()
   }
 
-  save () {
+  save (cb) {
+    cb()
   }
 
 }
 
 module.exports = {
-  MapObject,
+  Map,
 }

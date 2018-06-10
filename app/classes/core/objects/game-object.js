@@ -1,8 +1,9 @@
-const { EventsManager } = require('../../mixins/common/events')
-const { StatsMixin } = require('../../mixins/core/stats')
-const { SpriteMixin } = require('../../mixins/core/sprite')
+const { EventsManager } = require('../../../mixins/common/events')
+const { StatsMixin } = require('../../../mixins/core/stats')
+const { SpriteMixin } = require('../../../mixins/core/sprite')
+const { ActMixin } = require('../../../mixins/core/act')
 
-let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsMixin, SpriteMixin) {
+let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsMixin, SpriteMixin, ActMixin) {
 
   constructor (map) {
     super()
@@ -34,6 +35,8 @@ let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsM
     }
   }
 
+  get map () { return this._map }
+
   reset () {
     this._x = 0
     this._y = 0
@@ -53,9 +56,6 @@ let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsM
 
   destroy () {
     super.destroy()
-  }
-
-  tick (t, delta) {
   }
 
   act (t, delta) {

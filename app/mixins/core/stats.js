@@ -7,6 +7,9 @@ const StatsMixin = Mixin(superclass => class StatsMixin extends superclass {
   }
 
   clearStats () {
+    for (let name in this._stats) {
+      delete this[name]
+    }
     this._stats = {}
     this.emit('clear-stats')
     return this
@@ -16,39 +19,46 @@ const StatsMixin = Mixin(superclass => class StatsMixin extends superclass {
     return !_.isUndefined(this._stats[name])
   }
 
-  addStat (name, value) {
+  addStat (name) {
     if (!this.hasStat(name)) {
-      this._stats[name] = value
+      Object.defineProperty(this, name, {
+        enumerable: true,
+        get: () => this._stats[name],
+        set: value => {
+          if (value !== this._stats[name]) {
+            let old = this._stats[name]
+            this._stats[name] = value
+            this.emit(name + '-change', { newValue: value, oldValue: old })
+          }
+        },
+      })
+
+      this._stats[name] = null
       this.emit('add-stat', { name })
-      this.emit('set-stat', { name, value })
     }
-    return this
   }
 
   removeStat (name) {
     if (this.hasStat(name)) {
+      delete this[name]
       delete this._stats[name]
       this.emit('remove-stat', { name })
     }
-    return this
   }
 
   stat (name, value) {
-    if (this.hasStat(name)) {
-      if (!_.isUndefined(value)) {
-        this._stats[name] = value
-        this.emit('set-stat', { name, value })
+    if (!_.isUndefined(value)) {
+      if (!this.hasStat(name)) {
+        this.addStat(name)
       }
-      return this._stats[name]
+      this[name] = value
     }
-    else if (!_.isUndefined(value)) {
-      return this.addStat(name, value)
-    }
-    return undefined
+    return this._stats[name]
   }
 
   incStat (name, by = 1) {
-    return this.stat(name, this.stat(name) + by)
+    this[name] += by
+    return this._stats[name]
   }
 
 })

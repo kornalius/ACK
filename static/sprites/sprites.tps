@@ -56,7 +56,7 @@
         <key>jxrCompressionLevel</key>
         <uint>0</uint>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -181,51 +181,65 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../../../../../../Users/alain/appleiigs.jpg</key>
+            <key type="filename">cpubar.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>10,8,19,15</rect>
+                <rect>16,2,32,4</rect>
                 <key>scale9Paddings</key>
-                <rect>10,8,19,15</rect>
+                <rect>16,2,32,4</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">../../../../../../Users/alain/avatar.png</key>
+            <key type="filename">cursor.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>8,8,16,16</rect>
+                <rect>3,4,7,9</rect>
                 <key>scale9Paddings</key>
-                <rect>8,8,16,16</rect>
+                <rect>3,4,7,9</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">../../../../../../Users/alain/avatar_new.png</key>
+            <key type="filename">diskbar.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>100,100,200,200</rect>
+                <rect>16,3,32,5</rect>
                 <key>scale9Paddings</key>
-                <rect>100,100,200,200</rect>
+                <rect>16,3,32,5</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">healthbar.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,2,16,4</rect>
+                <key>scale9Paddings</key>
+                <rect>8,2,16,4</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>../../../../../../Users/alain/avatar.png</filename>
-            <filename>../../../../../../Users/alain/avatar_new.png</filename>
-            <filename>../../../../../../Users/alain/appleiigs.jpg</filename>
+            <filename>cursor.png</filename>
+            <filename>healthbar.png</filename>
+            <filename>cpubar.png</filename>
+            <filename>diskbar.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
