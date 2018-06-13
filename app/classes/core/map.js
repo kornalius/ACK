@@ -3,10 +3,9 @@ const { StateMixin } = require('../../mixins/core/state')
 const { ActMixin } = require('../../mixins/core/act')
 const { FloorMixin } = require('../../mixins/core/floor')
 
-const { TileObject, TILE_WALL, TILE_FLOOR, TILE_STAIRS_DOWN, TILE_STAIRS_UP } = require('./objects/tile-object')
+const { TileObject } = require('./objects/tile-object')
 
-const TILE_WIDTH = 16
-const TILE_HEIGHT = 16
+const { TILE_WIDTH, TILE_HEIGHT, TILE_WALL, TILE_FLOOR, TILE_STAIRS_DOWN, TILE_STAIRS_UP } = require('../../constants')
 
 let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, FloorMixin) {
 
@@ -268,6 +267,4 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
 module.exports = {
   Map,
-  TILE_WIDTH,
-  TILE_HEIGHT,
 }

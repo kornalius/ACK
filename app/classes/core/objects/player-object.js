@@ -1,6 +1,6 @@
 const { NpcObject } = require('./npc-object')
 
-let PlayerObject = class PlayerObject extends NpcObject {
+class PlayerObject extends NpcObject {
 
   constructor (x, y, z, map, type) {
     super(x, y, z, map, type)

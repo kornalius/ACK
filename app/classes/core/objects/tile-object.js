@@ -1,11 +1,6 @@
 const { GameObject } = require('./game-object')
 
-const TILE_FLOOR = 1
-const TILE_WALL = 2
-const TILE_DOOR_OPENED = 3
-const TILE_DOOR_CLOSED = 4
-const TILE_STAIRS_UP = 5
-const TILE_STAIRS_DOWN = 6
+const { TILE_FLOOR, TILE_WALL, TILE_DOOR_OPENED, TILE_DOOR_CLOSED, TILE_STAIRS_UP, TILE_STAIRS_DOWN } = require('../../../constants')
 
 class TileObject extends GameObject {
 
@@ -58,11 +53,4 @@ class TileObject extends GameObject {
 
 module.exports = {
   TileObject,
-
-  TILE_FLOOR,
-  TILE_WALL,
-  TILE_DOOR_OPENED,
-  TILE_DOOR_CLOSED,
-  TILE_STAIRS_UP,
-  TILE_STAIRS_DOWN,
 }

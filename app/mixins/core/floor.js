@@ -1,3 +1,5 @@
+const { TILE_FLOOR } = require('../../constants')
+
 const FloorMixin = Mixin(superclass => class FloorMixin extends superclass {
 
   constructor () {
@@ -17,7 +19,7 @@ const FloorMixin = Mixin(superclass => class FloorMixin extends superclass {
   }
 
   isFloorAt (x, y, z) {
-    return _.get(this.tileAt(x, y, z), 'type') === 1 // TILE_FLOOR
+    return _.get(this.tileAt(x, y, z), 'type') === TILE_FLOOR
   }
 
   isEmptyFloorAt (x, y, z) {

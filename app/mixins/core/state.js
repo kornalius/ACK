@@ -1,6 +1,4 @@
-const STOPPED = 0
-const RUNNING = 1
-const PAUSED = 2
+const { STOPPED, RUNNING, PAUSED } = require('../../constants')
 
 const StateMixin = Mixin(superclass => class StateMixin extends superclass {
 

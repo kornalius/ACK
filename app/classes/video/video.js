@@ -1,8 +1,6 @@
 const { Emitter } = require('../../mixins/common/events')
 
-const VIDEO_WIDTH = 320
-const VIDEO_HEIGHT = 240
-const VIDEO_SCALE = 4
+const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE } = require('../../constants')
 
 class Video extends Emitter {
 

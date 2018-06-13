@@ -2,7 +2,7 @@ const { EventsManager } = require('../../../mixins/common/events')
 const { SpriteMixin } = require('../../../mixins/core/sprite')
 const { ActMixin } = require('../../../mixins/core/act')
 
-let GameObject = class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) {
+class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) {
 
   constructor (x, y, z, map) {
     super()
