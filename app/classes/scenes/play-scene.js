@@ -23,6 +23,7 @@ let PlayScene = class PlayScene extends Scene {
   }
 
   act (t, delta) {
+    super.act(t, delta)
   }
 
 }

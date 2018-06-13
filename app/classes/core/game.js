@@ -1,4 +1,5 @@
 const utils = require('../../utils')
+const ROT = require('rot-js')
 
 const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/core/state')
@@ -63,6 +64,8 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   get stringToKey () { return utils.stringToKey }
   get keyevent () { return utils.keyevent }
 
+  get ROT () { return ROT }
+
   get ticks () { return this._ticks }
 
   get player () { return this._player }
@@ -73,6 +76,8 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   get scenes () { return this._scenes }
 
   reset () {
+    _.resetProps(this)
+
     this._ticks = []
     this._player.reset()
     this._scheduler.reset()
@@ -87,6 +92,9 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   start () {
     if (this.isStopped) {
       this.reset()
+
+      this._cursor.start()
+
       super.start()
 
       this._scenes.play = new PlayScene()
@@ -95,12 +103,23 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
     }
   }
 
+  stop () {
+    this._cursor.stop()
+
+    super.stop()
+  }
+
   destroy () {
     this.stop()
+
     this._player.destroy()
     this._scheduler.destroy()
     this._video.destroy()
     this._cursor.destroy()
+
+    if (this._scene) {
+      this._scene.destroy()
+    }
   }
 
   addTick (obj) {
@@ -116,6 +135,10 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   }
 
   update () {
+    if (this._scene && this._scene.update) {
+      this._scene.update()
+    }
+
     this._video.update()
   }
 
@@ -131,7 +154,15 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
       this._scheduler.tick(t, delta)
       this._video.tick(t, delta)
       this._cursor.tick(t, delta)
+
+      if (this._scene) {
+        this._scene.tick(t, delta)
+      }
     }
+  }
+
+  act (t, delta) {
+    super.act(t, delta)
   }
 
   gotoScene (name) {

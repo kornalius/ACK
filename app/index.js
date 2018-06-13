@@ -49,6 +49,47 @@ _.isUUID = function (value) {
   return utils.isUUID(value)
 }
 
+_.addProp = function (instance, name, value, readonly = false, resetFn) {
+  let privName = '_' + name
+  let proto = Object.getPrototypeOf(instance)
+
+  Object.defineProperty(proto, name, {
+    enumerable: true,
+    get: function () { return this[privName] },
+    set: function (value) {
+      let old = this[privName]
+      if (!readonly && value !== old) {
+        this[privName] = value
+        this.emit(_.kebabCase(name) + '-change', { value, old })
+      }
+    },
+  })
+
+  proto.__props = proto.__props || {}
+  proto.__props[name] = { name, privName, value, readonly, resetFn }
+}
+
+_.removeProp = function (instance, name) {
+  let proto = Object.getPrototypeOf(instance)
+  let p = proto.__props[name]
+
+  delete this[p.privName]
+  delete this[name]
+  delete proto.__props[name]
+}
+
+_.resetProps = function (instance) {
+  let proto = Object.getPrototypeOf(instance)
+
+  for (let key in proto.__props || {}) {
+    let p = proto.__props[key]
+    instance[p.privName] = p.value
+    if (p.resetFn) {
+      instance[p.resetFn]()
+    }
+  }
+}
+
 PIXI.Point.prototype.distance = target => {
   Math.sqrt((this.x - target.x) * (this.x - target.x) + (this.y - target.y) * (this.y - target.y))
 }

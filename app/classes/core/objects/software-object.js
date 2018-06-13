@@ -1,10 +1,9 @@
-const { EventsManager } = require('../../mixins/common/events')
-const { StatsMixin } = require('../../mixins/core/stats')
+const { ItemObject } = require('./item-object')
 
-let SoftwareObject = class SoftwareObject extends mix(Object).with(EventsManager, StatsMixin) {
+class SoftwareObject extends ItemObject {
 
-  constructor () {
-    super()
+  constructor (x, y, z, map, type) {
+    super(x, y, z, map, type)
   }
 
 }

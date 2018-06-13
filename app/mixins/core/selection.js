@@ -3,15 +3,10 @@ const SelectionMixin = Mixin(superclass => class SelectionMixin extends supercla
   constructor () {
     super(...arguments)
 
-    this._selection = []
+    _.addProp(this, 'selection', [])
   }
 
-  get selection () { return this._selection }
-  set selection (value) {
-    if (this._selection !== value) {
-      this._selection = value
-    }
-  }
+  get isSelection () { return true }
 
   get bounds () {
     let bounds = new window.Rect()
@@ -74,7 +69,7 @@ const SelectionMixin = Mixin(superclass => class SelectionMixin extends supercla
 
   select (value, single = false) {
     if (single) {
-      this.clear()
+      this.clearSelection()
     }
     return this.addSelection(value)
   }

@@ -768,6 +768,66 @@ const restoreProps = function (id, obj, props) {
   }
 }
 
+const getLine = function (startX, startY, endX, endY) {
+  let points = []
+  let dx = Math.abs(endX - startX)
+  let dy = Math.abs(endY - startY)
+  let sx = startX < endX ? 1 : -1
+  let sy = startY < endY ? 1 : -1
+  let err = dx - dy
+  let e2
+
+  while (true) {
+    points.push({ x: startX, y: startY })
+    if (startX === endX && startY === endY) {
+      break
+    }
+    e2 = err * 2
+    if (e2 > -dx) {
+      err -= dy
+      startX += sx
+    }
+    if (e2 < dx) {
+      err += dx
+      startY += sy
+    }
+  }
+
+  return points
+}
+
+const getCircle = function (centerX, centerY, radius) {
+  let points = []
+
+  let angle = 0
+  let increment = 10 / radius
+  let repeatTries = 0
+  let x
+  let y
+
+  while (angle <= 360 && repeatTries < 100) {
+    x = Math.round(centerX + radius * Math.cos(angle))
+    y = Math.round(centerY + radius * Math.sin(angle))
+
+    if (!_.find(points, { x, y })) {
+      points.push({ x, y })
+    }
+    else {
+      repeatTries++
+    }
+
+    angle += increment
+  }
+
+  return points
+}
+
+const getDistance = function (startX, startY, endX, endY) {
+  let horizontalDistance = startX - endX
+  let verticalDistance = startY - endY
+  return Math.sqrt(Math.pow(horizontalDistance, 2) + Math.pow(verticalDistance, 2))
+}
+
 module.exports = {
   _,
   p,
@@ -845,4 +905,7 @@ module.exports = {
   offsetTop,
   storeProps,
   restoreProps,
+  getLine,
+  getCircle,
+  getDistance,
 }

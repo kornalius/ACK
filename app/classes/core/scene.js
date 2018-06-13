@@ -1,30 +1,29 @@
 const { EventsManager } = require('../../mixins/common/events')
-const { StatsMixin } = require('../../mixins/core/stats')
 const { StateMixin } = require('../../mixins/core/state')
 const { ActMixin } = require('../../mixins/core/act')
 
-let Scene = class Scene extends mix(Object).with(EventsManager, StatsMixin, StateMixin, ActMixin) {
+let Scene = class Scene extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
     super()
-
-    this._container = new PIXI.Container()
 
     this.reset()
   }
 
   reset () {
-    this.clearStats()
+    _.resetProps(this)
   }
 
   start () {
+    this._container = new PIXI.Container()
     ACK.video.stage.addChildAt(this._container, 0)
     super.start()
   }
 
   stop () {
     ACK.video.stage.removeChild(this._container)
-    this._container.removeChildren()
+    this._container.destroy()
+    this._container = null
     super.stop()
   }
 
@@ -33,6 +32,7 @@ let Scene = class Scene extends mix(Object).with(EventsManager, StatsMixin, Stat
   }
 
   act (t, delta) {
+    super.act(t, delta)
   }
 
   newSprite (frame, x = 0, y = 0, anchor = 0.5) {

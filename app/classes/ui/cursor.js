@@ -9,8 +9,6 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
     super()
 
     this.reset()
-
-    setTimeout(() => this.start())
   }
 
   get x () { return this._x }
@@ -79,6 +77,8 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
   }
 
   reset () {
+    _.resetProps(this)
+
     this._x = 0
     this._y = 0
     this._btns = 0

@@ -3,10 +3,14 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
   constructor () {
     super(...arguments)
 
-    this._sprite = undefined
+    _.addProp(this, 'sprite', undefined, true, 'resetSprite')
   }
 
-  get sprite () { return this._sprite }
+  get isSprite () { return true }
+
+  resetSprite () {
+    this.destroySprite()
+  }
 
   createSprite (frame) {
     let sprite

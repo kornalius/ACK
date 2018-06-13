@@ -1,9 +1,9 @@
-const { GameObject } = require('./game-object')
+const { ItemObject } = require('./item-object')
 
-let HardwareObject = class HardwareObject extends GameObject {
+class HardwareObject extends ItemObject {
 
-  constructor () {
-    super()
+  constructor (x, y, z, map, type) {
+    super(x, y, z, map, type)
   }
 
 }

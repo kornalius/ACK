@@ -18,9 +18,12 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   get currentRemaining () { return this.currentDuration - this.currentElapsed }
 
   reset () {
+    _.resetProps(this)
+
     this._queue = []
     this._last = 0
     this._current = undefined
+
     this.emit('reset')
   }
 
@@ -42,6 +45,8 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   }
 
   act (t, delta) {
+    super.act(t, delta)
+
     let c = this._current
     if (c && t - c.last >= c.duration) {
       let obj = this._queue.shift()
@@ -51,6 +56,7 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
         last: t,
       }
     }
+
     this._last = t
   }
 

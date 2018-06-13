@@ -19,6 +19,7 @@ let MenuScene = class MenuScene extends Scene {
   }
 
   act (t, delta) {
+    super.act(t, delta)
   }
 
 }

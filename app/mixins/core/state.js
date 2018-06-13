@@ -5,12 +5,13 @@ const PAUSED = 2
 const StateMixin = Mixin(superclass => class StateMixin extends superclass {
 
   constructor () {
-    super()
+    super(...arguments)
 
-    this._state = STOPPED
+    _.addProp(this, 'state', STOPPED, true)
   }
 
-  get state () { return this._state }
+  get hasState () { return true }
+
   get isRunning () { return this._state === RUNNING }
   get isPaused () { return this._state === PAUSED }
   get isStopped () { return this._state === STOPPED }

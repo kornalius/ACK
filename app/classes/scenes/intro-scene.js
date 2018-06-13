@@ -19,6 +19,7 @@ let IntroScene = class IntroScene extends Scene {
   }
 
   act (t, delta) {
+    super.act(t, delta)
   }
 
 }

@@ -19,6 +19,7 @@ let EndScene = class EndScene extends Scene {
   }
 
   act (t, delta) {
+    super.act(t, delta)
   }
 
 }

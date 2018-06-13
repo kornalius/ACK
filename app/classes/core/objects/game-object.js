@@ -1,16 +1,18 @@
 const { EventsManager } = require('../../../mixins/common/events')
-const { StatsMixin } = require('../../../mixins/core/stats')
 const { SpriteMixin } = require('../../../mixins/core/sprite')
 const { ActMixin } = require('../../../mixins/core/act')
 
-let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsMixin, SpriteMixin, ActMixin) {
+let GameObject = class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) {
 
-  constructor (map) {
+  constructor (x, y, z, map) {
     super()
 
-    this._map = map
-
     this.reset()
+
+    this._x = x
+    this._y = y
+    this._z = z
+    this._map = map
   }
 
   get x () { return this._x }
@@ -19,7 +21,8 @@ let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsM
       this._x = value
       this.sprite.position.x = value
       if (!this._noEmit) {
-        this.emit('move', { x: this._x, y: this._y })
+        this.emit('move', { x: this._x, y: this._y, z: this._z })
+        this._map.update()
       }
     }
   }
@@ -30,7 +33,19 @@ let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsM
       this._y = value
       this.sprite.position.y = value
       if (!this._noEmit) {
-        this.emit('move', { x: this._x, y: this._y })
+        this.emit('move', { x: this._x, y: this._y, z: this._z })
+        this._map.update()
+      }
+    }
+  }
+
+  get z () { return this._z }
+  set z (value) {
+    if (value !== this._z) {
+      this._z = value
+      if (!this._noEmit) {
+        this.emit('move', { x: this._x, y: this._y, z: this._z })
+        this._map.update()
       }
     }
   }
@@ -38,27 +53,41 @@ let GameObject = class GameObject extends mix(Object).with(EventsManager, StatsM
   get map () { return this._map }
 
   reset () {
+    _.resetProps(this)
+
     this._x = 0
     this._y = 0
-    this.clearStats()
+    this._z = 0
+    this._map = undefined
   }
 
-  moveTo (x, y) {
+  moveTo (x, y, z) {
     this._noEmit = true
     this.x = x
-    this._noEmit = false
     this.y = y
+    this._noEmit = false
+    this.z = z
   }
 
-  moveBy (x, y) {
-    return this.moveTo(this._x + x, this._y + y)
-  }
-
-  destroy () {
-    super.destroy()
+  moveBy (x, y, z = 0) {
+    return this.moveTo(this._x + x, this._y + y, this._z + z)
   }
 
   act (t, delta) {
+    super.act(t, delta)
+  }
+
+  getNeighborPositions (x, y) {
+    let tiles = []
+    for (let dX = -1; dX < 2; dX++) {
+      for (let dY = -1; dY < 2; dY++) {
+        if (dX === 0 && dY === 0) {
+          continue
+        }
+        tiles.push({ x: x + dX, y: y + dY })
+      }
+    }
+    return tiles.randomize()
   }
 
 }
