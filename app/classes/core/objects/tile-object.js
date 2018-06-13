@@ -26,13 +26,19 @@ class TileObject extends GameObject {
       t === TILE_DOOR_CLOSED
   }
 
-  get blocksLight () {
+  get sightBlocked () {
     let t = this._type
     return t === TILE_WALL ||
       t === TILE_DOOR_CLOSED
   }
 
-  get stairs () {
+  get lightBlocked () {
+    let t = this._type
+    return t === TILE_WALL ||
+      t === TILE_DOOR_CLOSED
+  }
+
+  get isStairs () {
     let t = this._type
     return t === TILE_STAIRS_UP || t === TILE_STAIRS_DOWN
   }

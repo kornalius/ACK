@@ -11,8 +11,8 @@ class PlayerObject extends NpcObject {
     this._fov = undefined
   }
 
-  setupFov (map) {
-    this._fov = new ACK.ROT.FOV.PreciseShadowcasting((x, y) => _.get(map.tileAt(x, y, this._z), 'blocksLight', true))
+  setupFov () {
+    this._fov = new ACK.ROT.FOV.PreciseShadowcasting((x, y) => _.get(this._map.tileAt(x, y, this._z), 'sightBlocked', true))
   }
 
 }

@@ -52,6 +52,7 @@ _.isUUID = function (value) {
 _.addProp = function (instance, name, value, readonly = false, resetFn) {
   let privName = '_' + name
   let proto = Object.getPrototypeOf(instance)
+  let setFn = 'set' + _.titleCase(name)
 
   Object.defineProperty(proto, name, {
     enumerable: true,
@@ -59,6 +60,12 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
     set: function (value) {
       let old = this[privName]
       if (!readonly && value !== old) {
+        if (_.isFunction(this[setFn])) {
+          let r = this[setFn](value)
+          if (!_.isUndefined(r)) {
+            value = r
+          }
+        }
         this[privName] = value
         this.emit(_.kebabCase(name) + '-change', { value, old })
       }

@@ -59,6 +59,19 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     super.stop()
   }
 
+  _setupLevels () {
+    this._levels = new Array(this._depth)
+    for (let level = 0; level < this._depth; level++) {
+      this._levels[level] = new PIXI.Container()
+    }
+  }
+
+  _destroyLevels () {
+    for (let level = 0; level < this._depth; level++) {
+      this._levels[level].destroy()
+    }
+  }
+
   at (x, y, z) {
     let tile = this.tileAt(x, y, z)
     let items = this.itemsAt(x, y, z)
@@ -75,6 +88,31 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
       }
     }
     return results
+  }
+
+  get sprites () {
+    return _.concat(
+      _.map(this._tiles, t => t.sprite),
+      _.map(this._items, i => i.sprite),
+      _.map(this._npcs, n => n.sprite),
+      [this._player.sprite],
+    )
+  }
+
+  resetSpritesTint () {
+    for (let sprite of this.sprites) {
+      sprite.tint = 0xFFFFFF
+    }
+  }
+
+  spritesAt (x, y, z) {
+    let at = this.at(x, y, z)
+    return _.concat(
+      at.tile ? [at.tile.sprite] : [],
+      _.map(at.items || [], i => i.sprite),
+      _.map(at.npcs || [], n => n.sprite),
+      at.player ? [at.player.sprite] : [],
+    )
   }
 
   blockedAt (x, y, z) {
