@@ -52,7 +52,7 @@ _.isUUID = function (value) {
 _.addProp = function (instance, name, value, readonly = false, resetFn) {
   let privName = '_' + name
   let proto = Object.getPrototypeOf(instance)
-  let setFn = 'set' + _.titleCase(name)
+  let setFn = 'set' + _.capitalize(name)
 
   Object.defineProperty(proto, name, {
     enumerable: true,

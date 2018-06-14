@@ -6,7 +6,7 @@ const StackableMixin = Mixin(superclass => class StackableMixin extends supercla
     _.addProp(this, 'qty', 1)
   }
 
-  get isStackable () { return this._stackable }
+  get isStackable () { return true }
 
   addToStack (amount = 1) {
     this.qty += amount

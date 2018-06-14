@@ -1,6 +1,6 @@
 const { EventsManager } = require('../../mixins/common/events')
+const { StateMixin } = require('../../mixins/common/state')
 const { SpriteMixin } = require('../../mixins/core/sprite')
-const { StateMixin } = require('../../mixins/core/state')
 const { ActMixin } = require('../../mixins/core/act')
 
 let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, StateMixin, ActMixin) {

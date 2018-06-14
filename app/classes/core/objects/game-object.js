@@ -52,6 +52,8 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
 
   get map () { return this._map }
 
+  get name () { return 'Object' }
+
   reset () {
     _.resetProps(this)
 
@@ -59,6 +61,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
     this._y = 0
     this._z = 0
     this._map = undefined
+    this._name = undefined
   }
 
   moveTo (x, y, z) {

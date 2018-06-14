@@ -2,7 +2,7 @@ const utils = require('../../utils')
 const ROT = require('rot-js')
 
 const { EventsManager } = require('../../mixins/common/events')
-const { StateMixin } = require('../../mixins/core/state')
+const { StateMixin } = require('../../mixins/common/state')
 const { ActMixin } = require('../../mixins/core/act')
 
 const { Video } = require('../video/video')
@@ -12,7 +12,7 @@ const { Cursor } = require('../ui/cursor')
 
 const { PlayerObject } = require('./objects/player-object')
 
-const { PlayScene } = require('../scenes/play-scene')
+const { PlayScene } = require('../../game/scenes/play-scene')
 
 let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 

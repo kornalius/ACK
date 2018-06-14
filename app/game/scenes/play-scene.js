@@ -1,4 +1,4 @@
-const { Scene } = require('../core/scene')
+const { Scene } = require('../../classes/core/scene')
 
 let PlayScene = class PlayScene extends Scene {
 

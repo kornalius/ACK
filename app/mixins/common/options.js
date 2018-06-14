@@ -3,9 +3,11 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
   constructor () {
     super(...arguments)
 
-    this._validOptions = []
-    this._options = []
+    _.addProp(this, 'validOptions', [], true)
+    _.addProp(this, 'options', [], true)
   }
+
+  get hasOptions () { return true }
 
   addOption (name) {
     if (_.isArray(name)) {
@@ -17,7 +19,6 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
       this._options.push(name)
       this.emit('option-add', { name })
     }
-    return this
   }
 
   removeOption (name) {
@@ -30,7 +31,6 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
       _.pull(this._options, name)
       this.emit('option-remove', { name })
     }
-    return this
   }
 
   setOption (name, value) {
@@ -47,7 +47,6 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
 
   toggleOption (name) {
     this.setOption(name, !this.hasOption(name))
-    return this
   }
 
   isValidOption (name) {
@@ -63,7 +62,6 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
     else if (!this.isValidOption(name)) {
       this._validOptions.push(name)
     }
-    return this
   }
 
   removeValidOption (name) {
@@ -75,7 +73,6 @@ const OptionsMixin = Mixin(superclass => class OptionsMixin extends superclass {
     else if (this.isValidOption(name)) {
       _.pull(this._validOptions, name)
     }
-    return this
   }
 
   hasOption (name) {

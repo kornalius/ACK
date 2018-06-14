@@ -19,4 +19,23 @@ module.exports = {
 
   COMPLETED: 1,
   FAILED: 2,
+
+  SLOT_GENERIC: 1,
+  SLOT_HEAD: 2,
+  SLOT_EYES: 3,
+  SLOT_ARMS: 4,
+  SLOT_HANDS: 5,
+  SLOT_LHAND: 6,
+  SLOT_RHAND: 7,
+  SLOT_TORSO: 8,
+  SLOT_BELT: 9,
+  SLOT_LEGS: 10,
+  SLOT_FOOT: 11,
+
+  ITEM_KEY: 1,
+
+  BLUE_KEY: 1,
+  RED_KEY: 2,
+  GREEN_KEY: 3,
+  YELLOW_KEY: 4,
 }

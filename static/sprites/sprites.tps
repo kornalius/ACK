@@ -181,6 +181,22 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">blue-key.png</key>
+            <key type="filename">green-key.png</key>
+            <key type="filename">red-key.png</key>
+            <key type="filename">yellow-key.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">cpubar.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -240,6 +256,10 @@
             <filename>healthbar.png</filename>
             <filename>cpubar.png</filename>
             <filename>diskbar.png</filename>
+            <filename>green-key.png</filename>
+            <filename>yellow-key.png</filename>
+            <filename>red-key.png</filename>
+            <filename>blue-key.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

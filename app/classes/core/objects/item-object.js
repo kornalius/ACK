@@ -1,25 +1,20 @@
 const { GameObject } = require('./game-object')
+const { SLOT_GENERIC } = require('../../../constants')
 
 class ItemObject extends GameObject {
 
-  constructor (x, y, z, map, type) {
+  constructor (x, y, z, map) {
     super(x, y, z, map)
 
-    this._type = type
-  }
-
-  get type () { return this._type }
-  set type (value) {
-    if (value !== this._type) {
-      this._type = value
-      this.destroySprite()
-      let sf = this.spriteFrame
-      if (sf) {
-        this.createSprite(sf)
-      }
+    if (this.spriteFrame) {
+      this.createSprite(this.spriteFrame)
       this._map.update()
     }
   }
+
+  get type () { return 0 }
+
+  get slotType () { return SLOT_GENERIC }
 
   get spriteFrame () { return undefined }
 
