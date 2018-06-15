@@ -11,7 +11,7 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
 
     this._prevSprites = []
 
-    this._fov = new ACK.ROT.FOV.RecursiveShadowcasting((x, y) => _.get(this._map.tileAt(x, y, this._z), 'lightBlocked', true))
+    this._fov = new ACK.ROT.FOV.RecursiveShadowcasting((x, y) => this._map.tileAt(x, y, this._z) && this._map.lightBlockedAt(x, y, this._z))
   }
 
   get isLightDiffuser () { return true }
@@ -41,7 +41,8 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
       let i = intensity * (d / this._lightRadius)
       let sprites = this._map.spritesAt(this._x, this._y, this._z)
       for (let sprite of sprites) {
-        sprite.tint = Math.trunc(i * this._lightColor)
+        sprite.tint = this._lightColor
+        sprite.opacity = i
       }
       this._prevSprites = _.concat(this._prevSprites, sprites)
     }
@@ -49,6 +50,7 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
     if (this._needsRecomputeLight) {
       for (let sprite of this._prevSprites) {
         sprite.tint = 0xFFFFFF
+        sprite.opacity = 1
       }
 
       this._prevSprites = []
@@ -59,6 +61,7 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
       else {
         this._fov.compute90(this._x, this._y, this._lightRadius, this._lightDirection, c)
       }
+
       this._map.update()
     }
   }

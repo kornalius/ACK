@@ -5,7 +5,9 @@ const { FloorMixin } = require('../../mixins/core/floor')
 
 const { TileObject } = require('./objects/tile-object')
 
-const { TILE_WIDTH, TILE_HEIGHT, TILE_WALL, TILE_FLOOR, TILE_STAIRS_DOWN, TILE_STAIRS_UP } = require('../../constants')
+const { StairsUp, StairsDown } = require('../../game/items/stairs-up')
+
+const { TILE_WALL, TILE_FLOOR } = require('../../constants')
 
 let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, FloorMixin) {
 
@@ -21,18 +23,25 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
   get startPosition () { return this._startPosition }
 
-  get tiles () { return this._tiles }
-  get items () { return this._items }
-  get npcs () { return this._npcs }
+  get container () { return this._container }
 
   get width () { return this._width }
   get height () { return this._height }
   get depth () { return this._depth }
 
+  get levels () { return this._levels }
+  get level () { return this._level }
+
+  get tiles () { return this._tiles }
+  get items () { return this._items }
+  get npcs () { return this._npcs }
+
+  get player () { return ACK.player }
+
   reset () {
     _.resetProps(this)
 
-    this._startPosition = { x: 0, y: 0, z: 0 }
+    this._startPosition = new PIXI.Point(0, 0)
     this._needsRender = false
 
     this._tiles = []
@@ -42,17 +51,33 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this._width = 0
     this._height = 0
     this._depth = 0
+
+    this._levels = undefined
+    this._level = -1
   }
 
   start () {
+    this._container = new PIXI.Container()
+
     this._setupLevels()
     this._setupFovs()
 
     super.start()
+
+    this.gotoLevel(0)
+
+    let s = this.startPosition
+    this.player.moveTo(s.x, s.y, this._level, this)
   }
 
   stop () {
     this._destroyLevels()
+
+    if (this._container) {
+      this._container.parent.removeChild(this._container)
+      this._container.destroy()
+      this._container = undefined
+    }
 
     this.reset()
 
@@ -64,19 +89,26 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     for (let level = 0; level < this._depth; level++) {
       this._levels[level] = new PIXI.Container()
     }
+    this._generateLevels()
   }
 
   _destroyLevels () {
     for (let level = 0; level < this._depth; level++) {
       this._levels[level].destroy()
+      this._levels[level] = undefined
     }
+  }
+
+  hasLevel (level) {
+    return level < this._depth
   }
 
   at (x, y, z) {
     let tile = this.tileAt(x, y, z)
     let items = this.itemsAt(x, y, z)
     let npcs = this.npcsAt(x, y, z)
-    let player = ACK.player.x === x && ACK.player.y === y && ACK.player.z === z
+    let player = this.player
+    player = player.x === x && player.y === y && player.z === z ? player : undefined
     return { tile, items, npcs, player }
   }
 
@@ -95,7 +127,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
       _.map(this._tiles, t => t.sprite),
       _.map(this._items, i => i.sprite),
       _.map(this._npcs, n => n.sprite),
-      [this._player.sprite],
+      [this.player.sprite],
     )
   }
 
@@ -115,20 +147,16 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     )
   }
 
-  blockedAt (x, y, z) {
-    return _.get(this.tileAt(x, y, z), 'blocked', true)
-  }
-
   tileAt (x, y, z) {
-    return _.find(this._tiles, { x, y, z })
+    return _.find(this._tiles, i => i.x === x && i.y === y && i.z === z)
   }
 
   itemsAt (x, y, z) {
-    return _.filter(this._items, { x, y, z })
+    return _.filter(this._items, i => i.x === x && i.y === y && i.z === z)
   }
 
   npcsAt (x, y, z) {
-    return _.filter(this._npcs, { x, y, z })
+    return _.filter(this._npcs, i => i.x === x && i.y === y && i.z === z)
   }
 
   tilesAround (centerX, centerY, centerZ) {
@@ -176,39 +204,8 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this._needsRender = true
   }
 
-  _placeSprite (x, y, z, sprite) {
-    if (!sprite) {
-      return
-    }
-
-    if (ACK.player.z === z) {
-      sprite.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
-      if (!sprite.parent) {
-        ACK.video.stage.addChild(sprite)
-      }
-    }
-    else if (sprite.parent) {
-      ACK.video.stage.removeChild(sprite)
-    }
-  }
-
   render () {
-    this._needsRender = false
-
-    let p = ACK.player
-    this._placeSprite(p.x, p.y, p.z, p._sprite)
-
-    for (let t of this._tiles) {
-      this._placeSprite(t.x, t.y, t.z, t._sprite)
-    }
-
-    for (let o of this._items) {
-      this._placeSprite(o.x, o.y, o.z, o._sprite)
-    }
-
-    for (let n of this._npcs) {
-      this._placeSprite(n.x, n.y, n.z, n._sprite)
-    }
+    ACK.update()
   }
 
   load (cb) {
@@ -219,58 +216,66 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     cb()
   }
 
-  generateTiles (width, height, depth) {
-    let dungeon = new ACK.ROT.Map.Digger(width, height)
+  _generateLevels () {
+    let dungeon = new ACK.ROT.Map.Digger(this._width, this._height)
 
-    for (let z = 0; z < depth; z++) {
+    for (let z = 0; z < this._depth; z++) {
       dungeon.create((x, y, wall) => this._tiles.push(new TileObject(x, y, z, this, wall ? TILE_WALL : TILE_FLOOR)))
     }
 
     // Place stairs
-    for (let level = 0; level < depth - 1; level++) {
+    for (let level = 0; level < this._depth - 1; level++) {
       let floorX
       let floorY
       let tries = 0
 
       while ((this.blockedAt(floorX, floorY, level) || this.blockedAt(floorX, floorY, level + 1)) && tries < 1000) {
-        floorX = Math.floor(Math.random() * width)
-        floorY = Math.floor(Math.random() * height)
+        floorX = Math.floor(Math.random() * this._width)
+        floorY = Math.floor(Math.random() * this._height)
         tries++
       }
 
       if (tries < 1000 && floorX !== undefined && floorY !== undefined) {
-        this.setTileTypeAt(floorX, floorY, level, TILE_STAIRS_DOWN)
-        this.setTileTypeAt(floorX, floorY, level + 1, TILE_STAIRS_UP)
+        this.addItemAt(new StairsDown(floorX, floorY, level, this))
+        this.addItemAt(new StairsUp(floorX, floorY, level + 1, this))
       }
     }
+
+    return dungeon
   }
 
   addItemAtRandomPosition (item, z) {
-    let position = this.getRandomFloorPosition(z)
-    if (position) {
-      return this.addItem(position.x, position.y, position.z, item)
+    let p = this.getRandomFloorPosition(z)
+    if (p) {
+      return this.addItemAt(p.x, p.y, p.z, item)
     }
     return false
   }
 
   addItemAt (item, x, y, z) {
-    if (!this.isItemAt(item, x, y, z)) {
-      this._items.push({ x, y, z, item })
+    x = x || item.x
+    y = y || item.y
+    z = z || item.z
+
+    if (!item.isAt(x, y, z, this)) {
+      this._items.push(item)
+      item.moveTo(x, y, z, this)
       return true
     }
     return false
   }
 
   removeItemAt (item, x, y, z) {
-    if (this.isItemAt(item, x, y, z)) {
-      _.remove(this._items, { x, y, z, item })
+    x = x || item.x
+    y = y || item.y
+    z = z || item.z
+
+    if (item.isAt(x, y, z, this)) {
+      _.remove(this._items, item)
+      item.map = undefined
       return true
     }
     return false
-  }
-
-  isItemAt (item, x, y, z) {
-    return !_.isUndefined(_.find(this.itemsAt(x, y, z, item)))
   }
 
   addNpcAtRandomPosition (npc, z) {
@@ -282,23 +287,65 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   }
 
   addNpcAt (npc, x, y, z) {
-    if (!this.isNpcAt(npc, x, y, z)) {
-      this._npcs.push({ x, y, z, npc })
+    if (!npc.isAt(x, y, z, this)) {
+      npc.moveTo(x, y, z, this)
+      this._npcs.push(npc)
       return true
     }
     return false
   }
 
   removeNpcAt (npc, x, y, z) {
-    if (this.isNpcAt(npc, x, y, z)) {
-      _.remove(this._npcs, { x, y, z, npc })
+    if (npc.isAt(x, y, z, this)) {
+      _.remove(this._npcs, npc)
+      npc.map = undefined
       return true
     }
     return false
   }
 
-  isNpcAt (npc, x, y, z) {
-    return !_.isUndefined(_.find(this.npcsAt(x, y, z, npc)))
+  blockedAt (x, y, z) {
+    let p = this.at(x, y, z)
+    return _.get(p.tile, 'blocked') ||
+      _.find(_.get(p, 'items', []), { blocked: true }) ||
+      !_.isEmpty(p.npcs) ||
+      p.player
+  }
+
+  lightBlockedAt (x, y, z) {
+    let p = this.at(x, y, z)
+    return _.get(p.tile, 'lightBlocked') ||
+      _.find(_.get(p, 'items', []), { lightBlocked: true })
+  }
+
+  sightBlockedAt (x, y, z) {
+    let p = this.at(x, y, z)
+    return _.get(p.tile, 'sightBlocked') ||
+      _.find(_.get(p, 'items', []), { sightBlocked: true })
+  }
+
+  enter (level) {
+    this._level = level
+
+    this._container.removeChildren()
+    this._container.addChild(this._levels[level])
+
+    let p = this.player
+    p.moveTo(p.x, p.y, level, this)
+
+    this.emit('enter-level', { level })
+  }
+
+  exit (level) {
+    this._container.removeChild(this._levels[level])
+    this.emit('exit-level', { level })
+  }
+
+  gotoLevel (level) {
+    if (this._level !== level) {
+      this.exit(this._level)
+      this.enter(level)
+    }
   }
 
 }

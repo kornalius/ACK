@@ -54,26 +54,29 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
   let proto = Object.getPrototypeOf(instance)
   let setFn = 'set' + _.capitalize(name)
 
-  Object.defineProperty(proto, name, {
-    enumerable: true,
-    get: function () { return this[privName] },
-    set: function (value) {
-      let old = this[privName]
-      if (!readonly && value !== old) {
-        if (_.isFunction(this[setFn])) {
-          let r = this[setFn](value)
-          if (!_.isUndefined(r)) {
-            value = r
-          }
-        }
-        this[privName] = value
-        this.emit(_.kebabCase(name) + '-change', { value, old })
-      }
-    },
-  })
-
   proto.__props = proto.__props || {}
-  proto.__props[name] = { name, privName, value, readonly, resetFn }
+
+  if (!proto.__props[name]) {
+    Object.defineProperty(proto, name, {
+      enumerable: true,
+      get: function () { return this[privName] },
+      set: function (value) {
+        let old = this[privName]
+        if (!readonly && value !== old) {
+          if (_.isFunction(this[setFn])) {
+            let r = this[setFn](value)
+            if (!_.isUndefined(r)) {
+              value = r
+            }
+          }
+          this[privName] = value
+          this.emit(_.kebabCase(name) + '-change', { value, old })
+        }
+      },
+    })
+
+    proto.__props[name] = { name, privName, value, readonly, resetFn }
+  }
 }
 
 _.removeProp = function (instance, name) {

@@ -3,9 +3,9 @@ const { RED_KEY } = require('../../constants')
 
 class RedKey extends KeyItem {
 
-  get name () { return 'Red Key Card' }
+  get color () { return 'red' }
+
   get type () { return RED_KEY }
-  get spriteFrame () { return 'red-key.png' }
 
 }
 

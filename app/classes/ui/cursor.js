@@ -54,6 +54,8 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
 
     ACK.on('start', () => {
       this.createSprite('cursor.png')
+      this._sprite.anchor = new PIXI.Point(0, 0)
+      ACK.video.stage.addChild(this._sprite)
     })
 
     super.start()
@@ -89,14 +91,16 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
   moveTo (x, y) {
     let video = ACK.video
 
-    x = Math.trunc(Math.min(video.width - this._originX, Math.max(this._originX, x)))
-    y = Math.trunc(Math.min(video.height - this._originY, Math.max(this._originY, y)))
+    x = Math.trunc(Math.min(video.width - this._originX - this._sprite.width, Math.max(this._originX, x)))
+    y = Math.trunc(Math.min(video.height - this._originY - this._sprite.height, Math.max(this._originY, y)))
 
     this._x = x
     this._y = y
     this.sprite.position.set(x, y)
 
     this.emit('cursor-move', { x: this._x, y: this._y })
+
+    ACK.update()
   }
 
   destroy () {
@@ -143,7 +147,6 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
   onMouseMove (e) {
     if (this.isRunning) {
       this.moveTo(e.data.global.x / ACK.video.stage.scale.x, e.data.global.y / ACK.video.stage.scale.y)
-      ACK.update()
     }
   }
 

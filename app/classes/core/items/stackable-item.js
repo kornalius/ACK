@@ -1,7 +1,7 @@
-const { ItemObject } = require('../objects/item-object')
+const { PickableItem } = require('../objects/pickable-item')
 const { StackableMixin } = require('../../../mixins/core/stackable')
 
-class StackableItem extends mix(ItemObject).with(StackableMixin) {
+class StackableItem extends mix(PickableItem).with(StackableMixin) {
 
 }
 

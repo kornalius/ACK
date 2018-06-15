@@ -7,15 +7,15 @@ module.exports = {
   VIDEO_HEIGHT: 240,
   VIDEO_SCALE: 4,
 
+  MAP_WIDTH: 32,
+  MAP_HEIGHT: 32,
+  MAP_DEPTH: 1,
+
   TILE_WIDTH: 16,
   TILE_HEIGHT: 16,
 
   TILE_FLOOR: 1,
   TILE_WALL: 2,
-  TILE_DOOR_OPENED: 3,
-  TILE_DOOR_CLOSED: 4,
-  TILE_STAIRS_UP: 5,
-  TILE_STAIRS_DOWN: 6,
 
   COMPLETED: 1,
   FAILED: 2,
@@ -32,10 +32,17 @@ module.exports = {
   SLOT_LEGS: 10,
   SLOT_FOOT: 11,
 
-  ITEM_KEY: 1,
-
   BLUE_KEY: 1,
   RED_KEY: 2,
   GREEN_KEY: 3,
   YELLOW_KEY: 4,
+
+  BLUE_DOOR: 1,
+  RED_DOOR: 2,
+  GREEN_DOOR: 3,
+  YELLOW_DOOR: 4,
+
+  ITEM_KEY: 1,
+  ITEM_DOOR: 2,
+  ITEM_STAIRS: 3,
 }

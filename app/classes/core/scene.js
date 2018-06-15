@@ -35,7 +35,18 @@ let Scene = class Scene extends mix(Object).with(EventsManager, StateMixin, ActM
     super.act(t, delta)
   }
 
-  newSprite (frame, x = 0, y = 0, anchor = 0.5) {
+  update () {
+  }
+
+  newContainer (sprites) {
+    let container = new PIXI.Container()
+    for (let sprite of sprites) {
+      container.addChild(sprite)
+    }
+    return container
+  }
+
+  newSprite (frame, x = 0, y = 0, anchor = 0) {
     let sprite
 
     if (_.isArray(frame)) {
@@ -50,9 +61,31 @@ let Scene = class Scene extends mix(Object).with(EventsManager, StateMixin, ActM
     sprite.anchor.set(anchor)
     sprite.position.set(x, y)
 
-    this._container.addChild(sprite)
-
     return sprite
+  }
+
+  addToScene (sprite) {
+    if (_.isArray(sprite)) {
+      for (let s of sprite) {
+        this._container.addChild(s)
+      }
+    }
+    else {
+      this._container.addChild(sprite)
+    }
+    ACK.update()
+  }
+
+  removeFromScene (sprite) {
+    if (_.isArray(sprite)) {
+      for (let s of sprite) {
+        this._container.removeChild(s)
+      }
+    }
+    else {
+      this._container.removeChild(sprite)
+    }
+    ACK.update()
   }
 
 }

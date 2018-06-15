@@ -1,10 +1,20 @@
 const { StackableItem } = require('./stackable-item')
+const { UsableMixin } = require('../../../mixins/core/usable')
 const { ITEM_KEY } = require('../../../constants')
 
-class KeyItem extends StackableItem {
+class KeyItem extends mix(StackableItem).with(UsableMixin) {
 
-  get name () { return 'key' }
+  get color () { return '' }
+
+  get name () { return _.capitalize(this.color) + ' Key' }
+
   get type () { return ITEM_KEY }
+
+  get spriteFrame () { return this.color + '-key.png' }
+
+  use (amount = 1, target) {
+    return super.use(amount, target)
+  }
 
 }
 

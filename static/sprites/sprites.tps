@@ -182,8 +182,10 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">blue-key.png</key>
+            <key type="filename">floor.png</key>
             <key type="filename">green-key.png</key>
             <key type="filename">red-key.png</key>
+            <key type="filename">wall.png</key>
             <key type="filename">yellow-key.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -260,6 +262,8 @@
             <filename>yellow-key.png</filename>
             <filename>red-key.png</filename>
             <filename>blue-key.png</filename>
+            <filename>wall.png</filename>
+            <filename>floor.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -21,6 +21,7 @@ const OpenerMixin = Mixin(superclass => class OpenerMixin extends superclass {
   open (npc) {
     if (this.canOpen(npc)) {
       this.opened = true
+      this.emit('open', { npc })
     }
   }
 
@@ -31,6 +32,7 @@ const OpenerMixin = Mixin(superclass => class OpenerMixin extends superclass {
   close (npc) {
     if (this.canClose(npc)) {
       this.opened = false
+      this.emit('close', { npc })
     }
   }
 

@@ -3,20 +3,16 @@ const { SLOT_GENERIC } = require('../../../constants')
 
 class ItemObject extends GameObject {
 
-  constructor (x, y, z, map) {
-    super(x, y, z, map)
-
-    if (this.spriteFrame) {
-      this.createSprite(this.spriteFrame)
-      this._map.update()
-    }
-  }
-
   get type () { return 0 }
 
   get slotType () { return SLOT_GENERIC }
 
-  get spriteFrame () { return undefined }
+  isOfType (type) {
+    if (_.isArray(type)) {
+      return _.includes(type, this.type)
+    }
+    return this.type === type
+  }
 
   kill (attacker) {
     this.emit('dead')
@@ -26,8 +22,8 @@ class ItemObject extends GameObject {
         attacker.giveExperience(exp)
       }
     }
-    if (this.map) {
-      this.map.removeItemAt(this, this.x, this.y, this.z)
+    if (this._map) {
+      this._map.removeItemAt(this, this.x, this.y, this.z)
     }
   }
 

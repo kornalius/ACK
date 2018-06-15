@@ -6,6 +6,8 @@ class PlayerObject extends NpcObject {
     super(x, y, z, map, type)
   }
 
+  get isPlayer () { return true }
+
   reset () {
     super.reset()
     this._fov = undefined

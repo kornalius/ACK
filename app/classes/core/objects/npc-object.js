@@ -1,10 +1,7 @@
 const { ItemObject } = require('./item-object')
+const { ContainerMixin } = require('../../../mixins/core/container')
 
-class NpcObject extends ItemObject {
-
-  constructor (x, y, z, map, type) {
-    super(x, y, z, map, type)
-  }
+class NpcObject extends mix(ItemObject).with(ContainerMixin) {
 
   kill (attacker) {
     this.emit('dead')
@@ -16,6 +13,20 @@ class NpcObject extends ItemObject {
     }
     if (this.map) {
       this.map.removeNpcAt(this, this.x, this.y, this.z)
+    }
+  }
+
+  use (item, target, amount = 1) {
+    item = this.findItem(item)
+    if (item && item.use(target, amount)) {
+      return true
+    }
+    return false
+  }
+
+  activate (item) {
+    if (item.distanceFrom(this) <= 1) {
+      item.activate(this)
     }
   }
 

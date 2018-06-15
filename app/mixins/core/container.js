@@ -44,11 +44,25 @@ const ContainerMixin = Mixin(superclass => class ContainerMixin extends supercla
   }
 
   hasItem (item) {
+    if (_.isNumber(item)) {
+      return !_.isUndefined(_.find(this._items, { type: item }))
+    }
     return _.includes(this._items, item)
   }
 
   itemIndex (item) {
+    if (_.isNumber(item)) {
+      return _.indexOf(this._items, { type: item })
+    }
     return _.indexOf(this._items, item)
+  }
+
+  findItem (item) {
+    let i = this.itemIndex(item)
+    if (i !== -1) {
+      return this._items[i]
+    }
+    return undefined
   }
 
   canAddItem (item, amount = 1) {

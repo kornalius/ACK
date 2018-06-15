@@ -4,32 +4,32 @@ const LockerMixin = Mixin(superclass => class LockerMixin extends superclass {
     super(...arguments)
 
     _.addProp(this, 'locked', false)
-    _.addProp(this, 'keyId')
   }
 
   get isLocker () { return true }
 
   get isLocked () { return this._locked }
   get isUnlocked () { return !this._locked }
-  get needsKey () { return !_.isEmpty(this.keyId) }
 
-  canLock (npc) {
-    return this.isUnlocked && (!this.needsKey || npc && npc.hasKey(this.keyId))
+  canLock () {
+    return this.isUnlocked
   }
 
-  lock (npc) {
-    if (this.canLock(npc)) {
+  lock () {
+    if (this.canLock()) {
       this.locked = true
+      this.emit('lock')
     }
   }
 
-  canUnlock (npc) {
-    return this.isLocked && (!this.needsKey || npc && npc.hasKey(this.keyId))
+  canUnlock () {
+    return this.isLocked
   }
 
-  unlock (npc) {
-    if (this.canUnlock(npc)) {
+  unlock () {
+    if (this.canUnlock()) {
       this.locked = false
+      this.emit('unlock')
     }
   }
 
