@@ -7,7 +7,7 @@ const { TileObject } = require('./objects/tile-object')
 
 const { StairsUp, StairsDown } = require('../../game/items/stairs-up')
 
-const { TILE_WALL, TILE_FLOOR } = require('../../constants')
+const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_WALL, TILE_FLOOR } = require('../../constants')
 
 let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, FloorMixin) {
 
@@ -58,6 +58,33 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
   start () {
     this._container = new PIXI.Container()
+
+    this._container.interactive = true
+
+    this._container.on('mousemove', e => {
+      let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+      let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+      let tx = Math.floor(x / TILE_HEIGHT)
+      let ty = Math.floor(y / TILE_WIDTH)
+      let t = this.tileAt(tx, ty, this._level)
+      if (t && t._type === TILE_FLOOR) {
+        this.selectTileAt(tx, ty)
+      }
+      else {
+        this.unselectTiles()
+      }
+    })
+
+    this._container.on('mousedown', e => {
+      let x = e.data.global.x / VIDEO_SCALE
+      let y = e.data.global.y / VIDEO_SCALE
+      let tx = Math.floor(x / TILE_HEIGHT)
+      let ty = Math.floor(y / TILE_WIDTH)
+      let t = this.tileAt(tx, ty, this._level)
+      if (t && t._type === TILE_FLOOR) {
+        this.centerOn(tx * TILE_WIDTH + TILE_WIDTH * 0.5, ty * TILE_HEIGHT + TILE_HEIGHT * 0.5)
+      }
+    })
 
     this._setupLevels()
     this._setupFovs()
@@ -346,6 +373,48 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
       this.exit(this._level)
       this.enter(level)
     }
+  }
+
+  levelContainer (level = this._level) {
+    return this._levels[level]
+  }
+
+  selectTileAt (x, y) {
+    let s = this._tileSelector
+    if (!s) {
+      s = new PIXI.Sprite(PIXI.Texture.fromFrame('select.png'))
+      this._tileSelector = s
+    }
+    let c = this.levelContainer()
+    if (s.parent !== c) {
+      if (s.parent) {
+        s.parent.removeChild(s)
+      }
+      c.addChild(s)
+    }
+    s.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
+  }
+
+  unselectTiles () {
+    let s = this._tileSelector
+    if (s && s.parent) {
+      s.parent.removeChild(s)
+    }
+  }
+
+  scrollTo (x, y) {
+    let c = this._container
+    c.position.set(x, y)
+    ACK.update()
+  }
+
+  scrollBy (x, y) {
+    let c = this._container
+    this.scrollTo(c.position.x + x, c.position.y + y)
+  }
+
+  centerOn (x, y) {
+    this.scrollTo(-x + VIDEO_WIDTH / 2, -y + VIDEO_HEIGHT / 2)
   }
 
 }
