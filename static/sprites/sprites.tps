@@ -188,6 +188,8 @@
             <key type="filename">player-2.png</key>
             <key type="filename">red-key.png</key>
             <key type="filename">select.png</key>
+            <key type="filename">stairs-down.png</key>
+            <key type="filename">stairs-up.png</key>
             <key type="filename">wall.png</key>
             <key type="filename">yellow-key.png</key>
             <struct type="IndividualSpriteSettings">
@@ -270,6 +272,8 @@
             <filename>select.png</filename>
             <filename>player-1.png</filename>
             <filename>player-2.png</filename>
+            <filename>stairs-up.png</filename>
+            <filename>stairs-down.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

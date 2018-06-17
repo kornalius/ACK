@@ -29,7 +29,8 @@ let PlayScene = class PlayScene extends Scene {
     ])
     this.addToScene(this._uiContainer)
 
-    this._map = new Map(MAP_WIDTH, MAP_HEIGHT, MAP_DEPTH)
+    let depth = Math.floor(Math.random() * MAP_DEPTH)
+    this._map = new Map(MAP_WIDTH, MAP_HEIGHT, depth)
     this._maps.push(this._map)
     this._map.start()
 

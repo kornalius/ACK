@@ -33,12 +33,26 @@ class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
     }
   }
 
-  canMoveTo (x, y, z, map) {
-    x = x || this._x
-    y = y || this._y
-    z = z || this._z
-    map = map || this._map
+  canMoveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
     return super.canMoveTo(x, y, z, map) && map && !map.blockedAt(x, y, z)
+  }
+
+  moveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
+    let oldTile = this._map ? this._map.tileAt(this._x, this._y, this._z) : undefined
+    if (super.moveTo(x, y, z, map)) {
+      setTimeout(() => {
+        if (oldTile) {
+          oldTile.exit()
+        }
+        let tile = this._map.tileAt(this._x, this._y, this._z)
+        if (tile) {
+          tile.enter()
+        }
+      }, 100)
+      return true
+    }
+
+    return false
   }
 
 }

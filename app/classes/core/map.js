@@ -4,7 +4,7 @@ const { ActMixin } = require('../../mixins/core/act')
 
 const { TileObject } = require('./objects/tile-object')
 
-const { StairsUp, StairsDown } = require('../../game/items/stairs-up')
+const { StairsUp, StairsDown } = require('../../game/items/stairs')
 
 const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_WALL, TILE_FLOOR } = require('../../constants')
 
@@ -38,6 +38,8 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   get fovs () { return this._fovs }
   get explored () { return this._explored }
 
+  get bounds () { return new PIXI.Rectangle(0, 0, this._width * TILE_WIDTH, this._height * TILE_HEIGHT) }
+
   reset () {
     _.resetProps(this)
 
@@ -64,27 +66,29 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this._container.interactive = true
 
     this._container.on('mousemove', e => {
-      let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
-      let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
-      let tx = Math.floor(x / TILE_HEIGHT)
-      let ty = Math.floor(y / TILE_WIDTH)
-      let t = this.tileAt(tx, ty, this._level)
-      if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-        this.selectTileAt(tx, ty)
-      }
-      else {
-        this.unselectTiles()
+      this.unselectTiles()
+      if (!ACK.pauseInput) {
+        let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+        let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+        let tx = Math.floor(x / TILE_HEIGHT)
+        let ty = Math.floor(y / TILE_WIDTH)
+        let t = this.tileAt(tx, ty, this._level)
+        if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
+          this.selectTileAt(tx, ty)
+        }
       }
     })
 
     this._container.on('mousedown', e => {
-      let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
-      let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
-      let tx = Math.floor(x / TILE_HEIGHT)
-      let ty = Math.floor(y / TILE_WIDTH)
-      let t = this.tileAt(tx, ty, this._level)
-      if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-        this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
+      if (!ACK.pauseInput) {
+        let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+        let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+        let tx = Math.floor(x / TILE_HEIGHT)
+        let ty = Math.floor(y / TILE_WIDTH)
+        let t = this.tileAt(tx, ty, this._level)
+        if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
+          this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
+        }
       }
     })
 
@@ -110,8 +114,6 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
     super.stop()
   }
-
-  get isFloor () { return true }
 
   isFloorAt (x, y, z) {
     return _.get(this.tileAt(x, y, z), 'type') === TILE_FLOOR
@@ -172,7 +174,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   }
 
   hasLevel (level) {
-    return level < this._depth
+    return level >= 0 && level < this._depth
   }
 
   at (x, y, z) {
@@ -196,10 +198,10 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
   get sprites () {
     return _.concat(
-      _.map(this._tiles, t => t.sprite),
-      _.map(this._items, i => i.sprite),
-      _.map(this._npcs, n => n.sprite),
-      [this.player.sprite],
+      _.filter(_.map(this._tiles, t => t.sprite), s => !_.isUndefined(s)),
+      _.filter(_.map(this._items, i => i.sprite), s => !_.isUndefined(s)),
+      _.filter(_.map(this._npcs, n => n.sprite), s => !_.isUndefined(s)),
+      this.player && this.player.sprite ? [this.player.sprite] : [],
     )
   }
 
@@ -212,10 +214,10 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   spritesAt (x, y, z) {
     let at = this.at(x, y, z)
     return _.concat(
-      at.tile ? [at.tile.sprite] : [],
-      _.map(at.items || [], i => i.sprite),
-      _.map(at.npcs || [], n => n.sprite),
-      at.player ? [at.player.sprite] : [],
+      at.tile && at.tile.sprite ? [at.tile.sprite] : [],
+      _.filter(_.map(at.items, i => i.sprite), s => !_.isUndefined(s)),
+      _.filter(_.map(at.npcs, n => n.sprite), s => !_.isUndefined(s)),
+      at.player && at.player.sprite ? [at.player.sprite] : [],
     )
   }
 
@@ -288,6 +290,25 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     cb()
   }
 
+  _generateStairs () {
+    for (let z = 0; z < this._depth - 1; z++) {
+      let x = Math.floor(Math.random() * this._width)
+      let y = Math.floor(Math.random() * this._height)
+      let tries = 0
+
+      while ((this.blockedAt(x, y, z) || this.blockedAt(x, y, z + 1)) && tries < 1000) {
+        x = Math.floor(Math.random() * this._width)
+        y = Math.floor(Math.random() * this._height)
+        tries++
+      }
+
+      if (tries < 1000) {
+        this.addItemAt(new StairsUp(), x, y, z)
+        this.addItemAt(new StairsDown(), x, y, z + 1)
+      }
+    }
+  }
+
   _generateLevels () {
     let dungeon = new ACK.ROT.Map.Digger(this._width, this._height)
 
@@ -295,23 +316,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
       dungeon.create((x, y, wall) => this._tiles.push(new TileObject(x, y, z, this, wall ? TILE_WALL : TILE_FLOOR)))
     }
 
-    // Place stairs
-    for (let level = 0; level < this._depth - 1; level++) {
-      let floorX
-      let floorY
-      let tries = 0
-
-      while ((this.blockedAt(floorX, floorY, level) || this.blockedAt(floorX, floorY, level + 1)) && tries < 1000) {
-        floorX = Math.floor(Math.random() * this._width)
-        floorY = Math.floor(Math.random() * this._height)
-        tries++
-      }
-
-      if (tries < 1000 && floorX !== undefined && floorY !== undefined) {
-        this.addItemAt(new StairsDown(floorX, floorY, level, this))
-        this.addItemAt(new StairsUp(floorX, floorY, level + 1, this))
-      }
-    }
+    this._generateStairs()
 
     return dungeon
   }
@@ -319,16 +324,12 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   addItemAtRandomPosition (item, z) {
     let p = this.getRandomFloorPosition(z)
     if (p) {
-      return this.addItemAt(p.x, p.y, p.z, item)
+      return this.addItemAt(item, p.x, p.y, z)
     }
     return false
   }
 
-  addItemAt (item, x, y, z) {
-    x = x || item.x
-    y = y || item.y
-    z = z || item.z
-
+  addItemAt (item, x = item.x, y = item.y, z = item.z) {
     if (!item.isAt(x, y, z, this)) {
       this._items.push(item)
       item.moveTo(x, y, z, this)
@@ -337,11 +338,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     return false
   }
 
-  removeItemAt (item, x, y, z) {
-    x = x || item.x
-    y = y || item.y
-    z = z || item.z
-
+  removeItemAt (item, x = item.x, y = item.y, z = item.z) {
     if (item.isAt(x, y, z, this)) {
       _.remove(this._items, item)
       item.map = undefined
@@ -351,14 +348,14 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   }
 
   addNpcAtRandomPosition (npc, z) {
-    let position = this.getRandomFloorPosition(z)
-    if (position) {
-      return this.addNpc(position.x, position.y, position.z, npc)
+    let p = this.getRandomFloorPosition(z)
+    if (p) {
+      return this.addNpc(p.x, p.y, z, npc)
     }
     return false
   }
 
-  addNpcAt (npc, x, y, z) {
+  addNpcAt (npc, x = npc.x, y = npc.y, z = npc.z) {
     if (!npc.isAt(x, y, z, this)) {
       npc.moveTo(x, y, z, this)
       this._npcs.push(npc)
@@ -367,7 +364,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     return false
   }
 
-  removeNpcAt (npc, x, y, z) {
+  removeNpcAt (npc, x = npc.x, y = npc.y, z = npc.z) {
     if (npc.isAt(x, y, z, this)) {
       _.remove(this._npcs, npc)
       npc.map = undefined
@@ -379,44 +376,83 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   blockedAt (x, y, z) {
     let p = this.at(x, y, z)
     return _.get(p.tile, 'blocked') ||
-      _.find(_.get(p, 'items', []), { blocked: true }) ||
+      !_.isUndefined(_.find(p.items, { blocked: true })) ||
       !_.isEmpty(p.npcs) ||
-      p.player
+      !_.isUndefined(p.player)
   }
 
   lightBlockedAt (x, y, z) {
     let p = this.at(x, y, z)
     return _.get(p.tile, 'lightBlocked') ||
-      _.find(_.get(p, 'items', []), { lightBlocked: true })
+      !_.isUndefined(_.find(p.items, { lightBlocked: true }))
   }
 
   sightBlockedAt (x, y, z) {
     let p = this.at(x, y, z)
     return _.get(p.tile, 'sightBlocked') ||
-      _.find(_.get(p, 'items', []), { sightBlocked: true })
+      !_.isUndefined(_.find(p.items, { sightBlocked: true }))
   }
 
-  enter (level) {
+  enter (level, x, y) {
     this._level = level
 
     this._container.removeChildren()
-    this._container.addChild(this._levels[level])
 
-    let p = this.getRandomFloorPosition(level)
-    this.player.moveTo(p.x, p.y, level, this)
+    let c = this.levelContainer(level)
+    c.alpha = 0
+    this._container.addChild(c)
 
-    this.emit('enter-level', { level })
+    let p = !x && !y ? this.getRandomFloorPosition(level) : { x, y }
+    this.player.moveTo(p.x, p.y, level, this, false)
+
+    return new Promise((resolve, reject) => {
+      let value = { alpha: 0.0 }
+      new TWEEN.Tween(value)
+        .to({ alpha: 1.0 }, 500)
+        .easing(TWEEN.Easing.Quadratic.In)
+        .onUpdate(() => {
+          c.alpha = value.alpha
+          ACK.update()
+        })
+        .onComplete(() => {
+          resolve()
+        })
+        .start()
+
+      this.emit('enter-level', { level })
+    })
   }
 
   exit (level) {
-    this._container.removeChild(this._levels[level])
-    this.emit('exit-level', { level })
+    let c = this.levelContainer(level)
+
+    return new Promise((resolve, reject) => {
+      let value = { alpha: 1.0 }
+      new TWEEN.Tween(value)
+        .to({ alpha: 0.0 }, 500)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          if (c) {
+            c.alpha = value.alpha
+            ACK.update()
+          }
+        })
+        .onComplete(() => {
+          this._container.removeChildren()
+          resolve()
+        })
+        .start()
+
+      this.emit('exit-level', { level })
+    })
   }
 
-  gotoLevel (level) {
+  async gotoLevel (level, x, y) {
     if (this._level !== level) {
-      this.exit(this._level)
-      this.enter(level)
+      ACK.pauseInput = true
+      await this.exit(this._level)
+      await this.enter(level, x, y)
+      ACK.pauseInput = false
     }
   }
 
@@ -466,16 +502,12 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   }
 
   centerOn (x, y) {
-    let r = this.bounds()
+    let r = this.bounds
     let w = r.width / 2
     let h = r.height / 2
     let sw = VIDEO_WIDTH / 3
     let sh = VIDEO_HEIGHT / 1.5
     this.scrollTo(w - x - sw, h - y - sh)
-  }
-
-  bounds () {
-    return new PIXI.Rectangle(0, 0, this._width * TILE_WIDTH, this._height * TILE_HEIGHT)
   }
 
 }

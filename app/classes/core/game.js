@@ -74,6 +74,13 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   get scene () { return this._scene }
   get scenes () { return this._scenes }
 
+  get pauseInput () { return this._pauseInput }
+  set pauseInput (value) {
+    if (value !== this._pauseInput) {
+      this._pauseInput = value
+    }
+  }
+
   reset () {
     _.resetProps(this)
 
@@ -82,6 +89,8 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
     if (this._player) {
       this._player.reset()
     }
+
+    this._pauseInput = false
 
     this._scheduler.reset()
     this._video.reset()
@@ -175,17 +184,19 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   act (t, delta) {
     super.act(t, delta)
 
-    if (key.isPressed('left')) {
-      this._player.moveBy(-1, 0)
-    }
-    else if (key.isPressed('right')) {
-      this._player.moveBy(1, 0)
-    }
-    else if (key.isPressed('up')) {
-      this._player.moveBy(0, -1)
-    }
-    else if (key.isPressed('down')) {
-      this._player.moveBy(0, 1)
+    if (!this._pauseInput) {
+      if (key.isPressed('left')) {
+        this._player.moveBy(-1, 0)
+      }
+      else if (key.isPressed('right')) {
+        this._player.moveBy(1, 0)
+      }
+      else if (key.isPressed('up')) {
+        this._player.moveBy(0, -1)
+      }
+      else if (key.isPressed('down')) {
+        this._player.moveBy(0, 1)
+      }
     }
   }
 

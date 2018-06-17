@@ -2,7 +2,7 @@
 
 "blue-key.png":
 {
-	"frame": {"x":119,"y":1,"w":8,"h":8},
+	"frame": {"x":101,"y":1,"w":8,"h":8},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
@@ -10,7 +10,7 @@
 },
 "cpubar.png":
 {
-	"frame": {"x":1,"y":37,"w":80,"h":13},
+	"frame": {"x":1,"y":1,"w":80,"h":13},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":13},
@@ -18,7 +18,7 @@
 },
 "cursor.png":
 {
-	"frame": {"x":119,"y":11,"w":8,"h":8},
+	"frame": {"x":101,"y":11,"w":8,"h":8},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
@@ -26,7 +26,7 @@
 },
 "diskbar.png":
 {
-	"frame": {"x":37,"y":1,"w":80,"h":13},
+	"frame": {"x":1,"y":16,"w":80,"h":13},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":13},
@@ -34,7 +34,7 @@
 },
 "floor.png":
 {
-	"frame": {"x":1,"y":1,"w":16,"h":16},
+	"frame": {"x":83,"y":1,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -42,7 +42,7 @@
 },
 "green-key.png":
 {
-	"frame": {"x":119,"y":21,"w":8,"h":8},
+	"frame": {"x":101,"y":21,"w":8,"h":8},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
@@ -50,7 +50,7 @@
 },
 "healthbar.png":
 {
-	"frame": {"x":37,"y":16,"w":80,"h":13},
+	"frame": {"x":1,"y":31,"w":80,"h":13},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":13},
@@ -58,7 +58,7 @@
 },
 "player-1.png":
 {
-	"frame": {"x":1,"y":19,"w":16,"h":16},
+	"frame": {"x":83,"y":19,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -66,7 +66,7 @@
 },
 "player-2.png":
 {
-	"frame": {"x":19,"y":1,"w":16,"h":16},
+	"frame": {"x":1,"y":46,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -82,7 +82,23 @@
 },
 "select.png":
 {
-	"frame": {"x":19,"y":19,"w":16,"h":16},
+	"frame": {"x":19,"y":46,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"stairs-down.png":
+{
+	"frame": {"x":37,"y":46,"w":16,"h":16},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+	"sourceSize": {"w":16,"h":16}
+},
+"stairs-up.png":
+{
+	"frame": {"x":55,"y":46,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -90,7 +106,7 @@
 },
 "wall.png":
 {
-	"frame": {"x":83,"y":31,"w":16,"h":16},
+	"frame": {"x":73,"y":46,"w":16,"h":16},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
@@ -98,7 +114,7 @@
 },
 "yellow-key.png":
 {
-	"frame": {"x":101,"y":41,"w":8,"h":8},
+	"frame": {"x":91,"y":37,"w":8,"h":8},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":8,"h":8},
@@ -109,8 +125,8 @@
 	"version": "1.0",
 	"image": "sprites.png",
 	"format": "RGBA8888",
-	"size": {"w":128,"h":51},
+	"size": {"w":110,"h":63},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:8dfbbde4c6780b380868f3fb90eace43:1a9bdc08c2485f755768b77b4eb43cef:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c1decbb5b42d7a0c69d9e5d294b51027:999555d2a81df04bc9aee1c57df82b2c:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

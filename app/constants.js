@@ -9,7 +9,7 @@ module.exports = {
 
   MAP_WIDTH: 32,
   MAP_HEIGHT: 32,
-  MAP_DEPTH: 1,
+  MAP_DEPTH: 16,
 
   TILE_WIDTH: 16,
   TILE_HEIGHT: 16,

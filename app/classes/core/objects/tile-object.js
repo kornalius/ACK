@@ -26,7 +26,7 @@ class TileObject extends GameObject {
   get spriteFrame () {
     switch (this._type) {
       case TILE_FLOOR: { return 'floor.png' }
-      case TILE_WALL: { return 'wall.png' }
+      // case TILE_WALL: { return 'wall.png' }
     }
     return undefined
   }
@@ -36,6 +36,12 @@ class TileObject extends GameObject {
   get sightBlocked () { return this._type === TILE_WALL }
 
   get lightBlocked () { return this._type === TILE_WALL }
+
+  enter (npc) {
+  }
+
+  exit (npc) {
+  }
 
 }
 

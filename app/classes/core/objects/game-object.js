@@ -61,13 +61,8 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
 
   get spriteFrame () { return undefined }
 
-  placeSprite (x, y, z, map) {
+  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map) {
     if (this._sprite) {
-      x = x || this._x
-      y = y || this._y
-      z = z || this._z
-      map = map || this._map
-
       if (!this._sprite.parent || z !== this._z || map !== this._map) {
         if (this._sprite.parent) {
           this._sprite.parent.removeChild(this._sprite)
@@ -113,20 +108,19 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
 
   get lightBlocked () { return false }
 
-  canMoveTo (x, y, z, map) {
-    z = z || this._z
-    map = map || this._map
+  canMoveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
     return map && map.hasLevel(z)
   }
 
-  moveTo (x, y, z, map) {
+  moveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
     if (this.canMoveTo(x, y, z, map)) {
-      this.map = map || this._map
-      this.z = z || this._z
       this.x = x
       this.y = y
 
-      this.placeSprite(this._x, this._y, this._z, this._map)
+      this.placeSprite(this._x, this._y, z, map)
+
+      this.map = map
+      this.z = z
 
       return true
     }
@@ -161,10 +155,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
     return NaN
   }
 
-  isAt (x, y, z, map) {
-    z = z || this._z
-    map = map || this._map
-
+  isAt (x = this._x, y = this._y, z = this._z, map = this._map) {
     return this._x === x && this._y === y && this._z === z && this._map === map
   }
 
