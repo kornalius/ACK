@@ -1,7 +1,6 @@
 const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/common/state')
 const { ActMixin } = require('../../mixins/core/act')
-const { FloorMixin } = require('../../mixins/core/floor')
 
 const { TileObject } = require('./objects/tile-object')
 
@@ -9,7 +8,7 @@ const { StairsUp, StairsDown } = require('../../game/items/stairs-up')
 
 const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_WALL, TILE_FLOOR } = require('../../constants')
 
-let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, FloorMixin) {
+let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor (width, height, depth = 1) {
     super()
@@ -20,8 +19,6 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this._height = height
     this._depth = depth
   }
-
-  get startPosition () { return this._startPosition }
 
   get container () { return this._container }
 
@@ -38,10 +35,12 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
   get player () { return ACK.player }
 
+  get fovs () { return this._fovs }
+  get explored () { return this._explored }
+
   reset () {
     _.resetProps(this)
 
-    this._startPosition = new PIXI.Point(0, 0)
     this._needsRender = false
 
     this._tiles = []
@@ -54,6 +53,9 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
     this._levels = undefined
     this._level = -1
+
+    this._fovs =
+    this._explored = []
   }
 
   start () {
@@ -67,7 +69,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
       let tx = Math.floor(x / TILE_HEIGHT)
       let ty = Math.floor(y / TILE_WIDTH)
       let t = this.tileAt(tx, ty, this._level)
-      if (t && t._type === TILE_FLOOR) {
+      if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
         this.selectTileAt(tx, ty)
       }
       else {
@@ -76,13 +78,13 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     })
 
     this._container.on('mousedown', e => {
-      let x = e.data.global.x / VIDEO_SCALE
-      let y = e.data.global.y / VIDEO_SCALE
+      let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+      let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
       let tx = Math.floor(x / TILE_HEIGHT)
       let ty = Math.floor(y / TILE_WIDTH)
       let t = this.tileAt(tx, ty, this._level)
-      if (t && t._type === TILE_FLOOR) {
-        this.centerOn(tx * TILE_WIDTH + TILE_WIDTH * 0.5, ty * TILE_HEIGHT + TILE_HEIGHT * 0.5)
+      if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
+        this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
       }
     })
 
@@ -92,12 +94,10 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     super.start()
 
     this.gotoLevel(0)
-
-    let s = this.startPosition
-    this.player.moveTo(s.x, s.y, this._level, this)
   }
 
   stop () {
+    this._destroyFovs()
     this._destroyLevels()
 
     if (this._container) {
@@ -109,6 +109,51 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this.reset()
 
     super.stop()
+  }
+
+  get isFloor () { return true }
+
+  isFloorAt (x, y, z) {
+    return _.get(this.tileAt(x, y, z), 'type') === TILE_FLOOR
+  }
+
+  isEmptyFloorAt (x, y, z) {
+    return this.isFloorAt(x, y, z) && _.isEmpty(this.itemsAt(x, y, z)) && _.isEmpty(this.npcsAt(x, y, z))
+  }
+
+  getRandomFloorPosition (z) {
+    let x = Math.floor(Math.random() * this._width)
+    let y = Math.floor(Math.random() * this._height)
+    while (!this.isEmptyFloorAt(x, y, z)) {
+      x = Math.floor(Math.random() * this._width)
+      y = Math.floor(Math.random() * this._height)
+    }
+    return { x, y }
+  }
+
+  _setupFovs () {
+    this._fovs = new Array(this._depth)
+    for (let z = 0; z < this._depth; z++) {
+      this._fovs[z] = new ACK.ROT.FOV.PreciseShadowcasting((x, y) => !this.sightBlockedAt(x, y, z))
+    }
+  }
+
+  _destroyFovs () {
+    for (let z = 0; z < this._depth; z++) {
+      this._fovs[z] = undefined
+    }
+    this._fovs = undefined
+  }
+
+  setExplored (x, y, z, state) {
+    if (this.tileAt(x, y, z)) {
+      this._explored.push({ x, y, z, state })
+      _.each(this.spritesAt(x, y, z), sprite => { sprite.alpha = state ? 1 : 0 })
+    }
+  }
+
+  isExplored (x, y, z) {
+    return this.tileAt(x, y, z) ? _.get(_.find(this._explored, { x, y, z }), 'state', false) : false
   }
 
   _setupLevels () {
@@ -357,8 +402,8 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this._container.removeChildren()
     this._container.addChild(this._levels[level])
 
-    let p = this.player
-    p.moveTo(p.x, p.y, level, this)
+    let p = this.getRandomFloorPosition(level)
+    this.player.moveTo(p.x, p.y, level, this)
 
     this.emit('enter-level', { level })
   }
@@ -404,8 +449,15 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
   scrollTo (x, y) {
     let c = this._container
-    c.position.set(x, y)
-    ACK.update()
+    let coords = { x: c.position.x, y: c.position.y }
+    new TWEEN.Tween(coords)
+      .to({ x, y }, 250)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onUpdate(() => {
+        c.position.set(coords.x, coords.y)
+        ACK.update()
+      })
+      .start()
   }
 
   scrollBy (x, y) {
@@ -414,7 +466,16 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
   }
 
   centerOn (x, y) {
-    this.scrollTo(-x + VIDEO_WIDTH / 2, -y + VIDEO_HEIGHT / 2)
+    let r = this.bounds()
+    let w = r.width / 2
+    let h = r.height / 2
+    let sw = VIDEO_WIDTH / 3
+    let sh = VIDEO_HEIGHT / 1.5
+    this.scrollTo(w - x - sw, h - y - sh)
+  }
+
+  bounds () {
+    return new PIXI.Rectangle(0, 0, this._width * TILE_WIDTH, this._height * TILE_HEIGHT)
   }
 
 }

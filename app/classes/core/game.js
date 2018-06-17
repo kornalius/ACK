@@ -10,7 +10,7 @@ const { Video } = require('../video/video')
 const { Scheduler } = require('./scheduler')
 const { Cursor } = require('../ui/cursor')
 
-const { PlayerObject } = require('./objects/player-object')
+const { Player } = require('./player')
 
 const { PlayScene } = require('../../game/scenes/play-scene')
 
@@ -25,7 +25,6 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
     this._video = new Video()
     this._cursor = new Cursor()
 
-    this._player = new PlayerObject()
     this._scene = undefined
     this._scenes = {}
 
@@ -79,7 +78,11 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
     _.resetProps(this)
 
     this._ticks = []
-    this._player.reset()
+
+    if (this._player) {
+      this._player.reset()
+    }
+
     this._scheduler.reset()
     this._video.reset()
     this._cursor.reset()
@@ -92,6 +95,10 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   start () {
     if (this.isStopped) {
       this.reset()
+
+      this.actSpeed = 100
+
+      this._player = new Player()
 
       this._cursor.start()
 
@@ -146,6 +153,10 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
     if (this.isRunning) {
       let t = performance.now()
 
+      super.tick(t, delta)
+
+      TWEEN.update(t)
+
       for (let tt of this._ticks) {
         tt.tick(t, delta)
       }
@@ -163,6 +174,19 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
 
   act (t, delta) {
     super.act(t, delta)
+
+    if (key.isPressed('left')) {
+      this._player.moveBy(-1, 0)
+    }
+    else if (key.isPressed('right')) {
+      this._player.moveBy(1, 0)
+    }
+    else if (key.isPressed('up')) {
+      this._player.moveBy(0, -1)
+    }
+    else if (key.isPressed('down')) {
+      this._player.moveBy(0, 1)
+    }
   }
 
   gotoScene (name) {

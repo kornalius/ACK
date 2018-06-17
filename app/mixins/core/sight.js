@@ -3,7 +3,7 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
   constructor () {
     super(...arguments)
 
-    _.addProp(this, 'sightRadius', 1)
+    _.addProp(this, 'sightRadius', 6)
   }
 
   get hasSight () { return true }
@@ -21,7 +21,7 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
     }
 
     let found = false
-    this.map.fovs[this._z].compute(this._x, this._y, this._sightRadius, (x, y, radius, visibility) => {
+    this._map.fovs[this._z].compute(this._x, this._y, this._sightRadius, (x, y, radius, visibility) => {
       if (x === otherX && y === otherY) {
         found = true
       }
@@ -31,8 +31,8 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
 
   scanForFriends () {
     let friends = []
-    let radius = this.sightRadius
-    let npcs = this.map.npcsAround(this._x, this._y, this._z, radius)
+    let radius = this._sightRadius
+    let npcs = this._map.npcsAround(this._x, this._y, this._z, radius)
 
     for (let npc of npcs) {
       if (this.canSee(npc) && (!this.hasRelations || npc.isFriendWith(this))) {
@@ -46,8 +46,8 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
   scanForEnemies () {
     let enemies = []
 
-    let radius = this.sightRadius
-    let npcs = this.map.npcsAround(this._x, this._y, this._z, radius)
+    let radius = this._sightRadius
+    let npcs = this._map.npcsAround(this._x, this._y, this._z, radius)
 
     for (let npc of npcs) {
       if (this.canSee(npc) && this.hasRelations && npc.isEnemyOf(this)) {
@@ -56,6 +56,28 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
     }
 
     return enemies
+  }
+
+  updateFov () {
+    let pt = new PIXI.Point(this._x, this._y)
+    let z = this._z
+    let s = this._sightRadius
+
+    if (_.isArray(this._prevSprites)) {
+      _.each(this._prevSprites, s => { s.alpha = 0 })
+    }
+    this._prevSprites = []
+
+    this._map.fovs[z].compute(this._x, this._y, this._sightRadius, (x, y) => {
+      this._map.setExplored(x, y, z, true)
+      let alpha = 0
+      if (this._map.isFloorAt(x, y, z)) {
+        alpha = 1 - (pt.distance(new PIXI.Point(x, y)) / s)
+      }
+      let sprites = this._map.spritesAt(x, y, z)
+      _.each(sprites, s => { s.alpha = alpha })
+      this._prevSprites = _.concat(this._prevSprites, sprites)
+    })
   }
 
 })

@@ -25,6 +25,8 @@ const _ = require('underscore-plus')
 const is = require('is_js')
 
 require('pixi.js')
+window.TWEEN = require('tween.js')
+window.key = require('keymaster')
 
 window._ = _
 _.extend(_, require('lodash'))

@@ -76,6 +76,7 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
     })
 
     proto.__props[name] = { name, privName, value, readonly, resetFn }
+    instance[privName] = value
   }
 }
 
@@ -100,8 +101,8 @@ _.resetProps = function (instance) {
   }
 }
 
-PIXI.Point.prototype.distance = target => {
-  Math.sqrt((this.x - target.x) * (this.x - target.x) + (this.y - target.y) * (this.y - target.y))
+PIXI.Point.prototype.distance = function (target) {
+  return Math.sqrt((this.x - target.x) * (this.x - target.x) + (this.y - target.y) * (this.y - target.y))
 }
 
 const { Game } = require('./classes/core/game')

@@ -42,7 +42,7 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
       let sprites = this._map.spritesAt(this._x, this._y, this._z)
       for (let sprite of sprites) {
         sprite.tint = this._lightColor
-        sprite.opacity = i
+        sprite.alpha = i
       }
       this._prevSprites = _.concat(this._prevSprites, sprites)
     }
@@ -50,7 +50,7 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
     if (this._needsRecomputeLight) {
       for (let sprite of this._prevSprites) {
         sprite.tint = 0xFFFFFF
-        sprite.opacity = 1
+        sprite.alpha = 1
       }
 
       this._prevSprites = []

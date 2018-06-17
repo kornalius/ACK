@@ -1,7 +1,10 @@
 const { ItemObject } = require('./item-object')
 const { ContainerMixin } = require('../../../mixins/core/container')
+const { SightMixin } = require('../../../mixins/core/sight')
 
-class NpcObject extends mix(ItemObject).with(ContainerMixin) {
+class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
+
+  get animateMove () { return true }
 
   kill (attacker) {
     this.emit('dead')
@@ -28,6 +31,14 @@ class NpcObject extends mix(ItemObject).with(ContainerMixin) {
     if (item.distanceFrom(this) <= 1) {
       item.activate(this)
     }
+  }
+
+  canMoveTo (x, y, z, map) {
+    x = x || this._x
+    y = y || this._y
+    z = z || this._z
+    map = map || this._map
+    return super.canMoveTo(x, y, z, map) && map && !map.blockedAt(x, y, z)
   }
 
 }

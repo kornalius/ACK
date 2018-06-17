@@ -12,14 +12,18 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
     this.reset()
 
     this.createSprite(this.spriteFrame)
+    if (this._sprite) {
+      this._sprite.alpha = 0
+    }
 
     this.moveTo(x, y, z, map)
   }
 
+  get animateMove () { return false }
+
   get x () { return this._x }
   set x (value) {
     if (value !== this._x) {
-      this.placeSprite(value, this._y, this._z, this._map)
       let old = this._x
       this._x = value
       this.emit('x-change', { value, old })
@@ -29,7 +33,6 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
   get y () { return this._y }
   set y (value) {
     if (value !== this._y) {
-      this.placeSprite(this._x, value, this._z, this._map)
       let old = this._y
       this._y = value
       this.emit('y-change', { value, old })
@@ -39,7 +42,6 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
   get z () { return this._z }
   set z (value) {
     if (value !== this._z) {
-      this.placeSprite(this._x, this._y, value, this._map)
       let old = this._z
       this._z = value
       this.emit('z-change', { value, old })
@@ -50,7 +52,6 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
   set map (value) {
     if (value !== this._map) {
       let old = this._map
-      this.placeSprite(this._x, this._y, this._z, value)
       this._map = value
       this.emit('map-change', { value, old })
     }
@@ -67,8 +68,6 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
       z = z || this._z
       map = map || this._map
 
-      this._sprite.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
-
       if (!this._sprite.parent || z !== this._z || map !== this._map) {
         if (this._sprite.parent) {
           this._sprite.parent.removeChild(this._sprite)
@@ -78,6 +77,21 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
           map.levels[z].addChild(this._sprite)
           map.update()
         }
+      }
+
+      if (this.animateMove) {
+        let coords = { x: this._sprite.position.x, y: this._sprite.position.y }
+        new TWEEN.Tween(coords)
+          .to({ x: x * TILE_WIDTH, y: y * TILE_HEIGHT }, 100)
+          .easing(TWEEN.Easing.Quadratic.Out)
+          .onUpdate(() => {
+            this._sprite.position.set(coords.x, coords.y)
+            ACK.update()
+          })
+          .start()
+      }
+      else {
+        this._sprite.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
       }
     }
   }
@@ -99,11 +113,24 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
 
   get lightBlocked () { return false }
 
+  canMoveTo (x, y, z, map) {
+    z = z || this._z
+    map = map || this._map
+    return map && map.hasLevel(z)
+  }
+
   moveTo (x, y, z, map) {
-    this.x = x
-    this.y = y
-    this.z = z
-    this.map = map
+    if (this.canMoveTo(x, y, z, map)) {
+      this.map = map || this._map
+      this.z = z || this._z
+      this.x = x
+      this.y = y
+
+      this.placeSprite(this._x, this._y, this._z, this._map)
+
+      return true
+    }
+    return false
   }
 
   moveBy (x, y, z = 0) {
@@ -139,6 +166,12 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
     map = map || this._map
 
     return this._x === x && this._y === y && this._z === z && this._map === map
+  }
+
+  centerOn () {
+    if (this._map) {
+      this._map.centerOn(this._x * TILE_WIDTH, this._y * TILE_HEIGHT)
+    }
   }
 
 }

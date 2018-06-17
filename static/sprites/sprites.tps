@@ -184,6 +184,8 @@
             <key type="filename">blue-key.png</key>
             <key type="filename">floor.png</key>
             <key type="filename">green-key.png</key>
+            <key type="filename">player-1.png</key>
+            <key type="filename">player-2.png</key>
             <key type="filename">red-key.png</key>
             <key type="filename">select.png</key>
             <key type="filename">wall.png</key>
@@ -266,6 +268,8 @@
             <filename>wall.png</filename>
             <filename>floor.png</filename>
             <filename>select.png</filename>
+            <filename>player-1.png</filename>
+            <filename>player-2.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

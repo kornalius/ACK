@@ -16,6 +16,9 @@ class TileObject extends GameObject {
       this._type = value
       this.destroySprite()
       this.createSprite(this.spriteFrame)
+      if (this._sprite) {
+        this._sprite.alpha = 0
+      }
       this.placeSprite()
     }
   }

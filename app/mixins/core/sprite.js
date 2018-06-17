@@ -20,9 +20,16 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
     let sprite
 
     if (_.isArray(frame)) {
-      sprite = new PIXI.extras.AnimatedSprite(frame)
-      sprite.animationSpeed = 0.5
+      let frames = []
+      for (let f of frame) {
+        frames.push(PIXI.Texture.fromFrame(f))
+      }
+      sprite = new PIXI.extras.AnimatedSprite(frames)
+      sprite.animationSpeed = 0.05
       sprite.play()
+      sprite.onFrameChange = () => {
+        ACK.update()
+      }
     }
     else {
       sprite = new PIXI.Sprite(PIXI.Texture.fromFrame(frame))

@@ -14,7 +14,9 @@ const ActMixin = Mixin(superclass => class ActMixin extends superclass {
 
   tick (t, delta) {
     if (t - this._lastTick >= this._tickSpeed) {
-      this.act(t, delta)
+      if (this.canAct(t)) {
+        this.act(t, delta)
+      }
       this._lastTick = t
       return true
     }
@@ -23,13 +25,11 @@ const ActMixin = Mixin(superclass => class ActMixin extends superclass {
 
   canAct (t) {
     let speed = this.hasSpeed ? this.speed : this._actSpeed
-    return this.hasSpeed && t - this.lastAct >= speed
+    return t - this.lastAct >= speed
   }
 
   act (t, delta) {
-    if (this.canAct(t)) {
-      this._lastAct = t
-    }
+    this._lastAct = t
   }
 
 })
