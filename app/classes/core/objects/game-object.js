@@ -1,10 +1,11 @@
 const { EventsManager } = require('../../../mixins/common/events')
 const { SpriteMixin } = require('../../../mixins/core/sprite')
+const { FlipMixin } = require('../../../mixins/core/flip')
 const { ActMixin } = require('../../../mixins/core/act')
 
 const { TILE_WIDTH, TILE_HEIGHT } = require('../../../constants')
 
-class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) {
+class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin, ActMixin) {
 
   constructor (x, y, z, map) {
     super()
@@ -61,7 +62,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
 
   get spriteFrame () { return undefined }
 
-  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map) {
+  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this._animateMove) {
     if (this._sprite) {
       if (!this._sprite.parent || z !== this._z || map !== this._map) {
         if (this._sprite.parent) {
@@ -74,7 +75,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
         }
       }
 
-      if (this.animateMove) {
+      if (animate) {
         let coords = { x: this._sprite.position.x, y: this._sprite.position.y }
         new TWEEN.Tween(coords)
           .to({ x: x * TILE_WIDTH, y: y * TILE_HEIGHT }, 100)
@@ -163,6 +164,11 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, ActMixin) 
     if (this._map) {
       this._map.centerOn(this._x * TILE_WIDTH, this._y * TILE_HEIGHT)
     }
+  }
+
+  updateSpriteFrame () {
+    this.updateSprite(this.spriteFrame)
+    ACK.update()
   }
 
 }

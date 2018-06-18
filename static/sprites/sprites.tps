@@ -4,7 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>4.8.0</string>
+        <string>4.8.1</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -82,7 +82,7 @@
         <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
-        <enum type="SettingsBase::TextureFormat">png</enum>
+        <enum type="SettingsBase::TextureFormat">png8</enum>
         <key>borderPadding</key>
         <uint>0</uint>
         <key>maxTextureSize</key>
@@ -181,16 +181,38 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">blue-door-closed.png</key>
+            <key type="filename">green-door-closed.png</key>
+            <key type="filename">red-door-closed.png</key>
+            <key type="filename">yellow-door-closed.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,5,8,9</rect>
+                <key>scale9Paddings</key>
+                <rect>4,5,8,9</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">blue-door-opened.png</key>
             <key type="filename">blue-key.png</key>
+            <key type="filename">door-closed.png</key>
+            <key type="filename">door-opened.png</key>
             <key type="filename">floor.png</key>
+            <key type="filename">green-door-opened.png</key>
             <key type="filename">green-key.png</key>
             <key type="filename">player-1.png</key>
             <key type="filename">player-2.png</key>
+            <key type="filename">red-door-opened.png</key>
             <key type="filename">red-key.png</key>
             <key type="filename">select.png</key>
             <key type="filename">stairs-down.png</key>
             <key type="filename">stairs-up.png</key>
             <key type="filename">wall.png</key>
+            <key type="filename">yellow-door-opened.png</key>
             <key type="filename">yellow-key.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -274,6 +296,16 @@
             <filename>player-2.png</filename>
             <filename>stairs-up.png</filename>
             <filename>stairs-down.png</filename>
+            <filename>red-door-closed.png</filename>
+            <filename>green-door-closed.png</filename>
+            <filename>blue-door-closed.png</filename>
+            <filename>yellow-door-closed.png</filename>
+            <filename>blue-door-opened.png</filename>
+            <filename>green-door-opened.png</filename>
+            <filename>red-door-opened.png</filename>
+            <filename>yellow-door-opened.png</filename>
+            <filename>door-opened.png</filename>
+            <filename>door-closed.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

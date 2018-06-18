@@ -8,6 +8,8 @@ const ActMixin = Mixin(superclass => class ActMixin extends superclass {
 
     _.addProp(this, 'actSpeed', 100)
     _.addProp(this, 'lastAct', 0, true)
+
+    _.addProp(this, 'actPaused', 0, false)
   }
 
   get hasAct () { return true }
@@ -25,7 +27,7 @@ const ActMixin = Mixin(superclass => class ActMixin extends superclass {
 
   canAct (t) {
     let speed = this.hasSpeed ? this.speed : this._actSpeed
-    return t - this.lastAct >= speed
+    return t - this.lastAct >= speed && !this._actPaused
   }
 
   act (t, delta) {

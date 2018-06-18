@@ -18,8 +18,11 @@ const LockerMixin = Mixin(superclass => class LockerMixin extends superclass {
   lock () {
     if (this.canLock()) {
       this.locked = true
+      this.updateSpriteFrame()
       this.emit('lock')
+      return true
     }
+    return false
   }
 
   canUnlock () {
@@ -29,8 +32,11 @@ const LockerMixin = Mixin(superclass => class LockerMixin extends superclass {
   unlock () {
     if (this.canUnlock()) {
       this.locked = false
+      this.updateSpriteFrame()
       this.emit('unlock')
+      return true
     }
+    return false
   }
 
 })

@@ -12,31 +12,45 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
     this.destroySprite()
   }
 
-  createSprite (frame) {
-    if (!frame) {
-      return undefined
-    }
-
-    let sprite
+  updateSprite (frame) {
+    let sprite = this._sprite
 
     if (_.isArray(frame)) {
       let frames = []
       for (let f of frame) {
         frames.push(PIXI.Texture.fromFrame(f))
       }
-      sprite = new PIXI.extras.AnimatedSprite(frames)
-      sprite.animationSpeed = 0.05
-      sprite.play()
-      sprite.onFrameChange = () => {
-        ACK.update()
+
+      if (sprite) {
+        sprite.textures = frames
+        sprite.play()
       }
+      else {
+        sprite = new PIXI.extras.AnimatedSprite(frames)
+        sprite.animationSpeed = 0.05
+        sprite.play()
+        sprite.onFrameChange = () => {
+          ACK.update()
+        }
+      }
+    }
+    else if (sprite) {
+      sprite.texture = PIXI.Texture.fromFrame(frame)
     }
     else {
       sprite = new PIXI.Sprite(PIXI.Texture.fromFrame(frame))
     }
 
-    this._sprite = sprite
+    return sprite
+  }
 
+  createSprite (frame) {
+    if (!frame) {
+      return undefined
+    }
+    let sprite = this.updateSprite(frame)
+    sprite._parent = this
+    this._sprite = sprite
     return sprite
   }
 
@@ -45,7 +59,7 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
       if (this._sprite.parent) {
         this._sprite.parent.removeChild(this._sprite)
       }
-      this._sprite.destroy()
+      this._sprite.destroy({ children: true })
       this._sprite = undefined
     }
   }

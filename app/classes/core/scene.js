@@ -22,7 +22,7 @@ let Scene = class Scene extends mix(Object).with(EventsManager, StateMixin, ActM
 
   stop () {
     ACK.video.stage.removeChild(this._container)
-    this._container.destroy()
+    this._container.destroy({ children: true })
     this._container = null
     super.stop()
   }

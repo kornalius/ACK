@@ -4,6 +4,8 @@ const { SightMixin } = require('../../../mixins/core/sight')
 
 class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
 
+  get isNpc () { return true }
+
   get animateMove () { return true }
 
   kill (attacker) {
@@ -39,7 +41,17 @@ class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
 
   moveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
     let oldTile = this._map ? this._map.tileAt(this._x, this._y, this._z) : undefined
+    let oldX = this._x
     if (super.moveTo(x, y, z, map)) {
+
+      if (this.hasSight) {
+        this.updateFov()
+      }
+
+      if (oldX !== this._x) {
+        this.flipX = Math.abs(oldX - this._x) === 1 && this._x > oldX
+      }
+
       setTimeout(() => {
         if (oldTile) {
           oldTile.exit()

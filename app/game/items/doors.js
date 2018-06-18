@@ -1,6 +1,21 @@
 const { DoorItem } = require('../../classes/core/items/door-item')
 
 
+const { ITEM_DOOR } = require('../../constants')
+
+class Door extends DoorItem {
+
+  get name () { return (this.opened ? 'Opened' : 'Closed') + ' Door' }
+
+  get type () { return ITEM_DOOR }
+
+  get spriteFrame () { return 'door-' + (this.opened ? 'opened' : 'closed') + '.png' }
+
+  get blocked () { return false }
+
+}
+
+
 const { BLUE_DOOR, BLUE_KEY } = require('../../constants')
 
 class BlueDoor extends DoorItem {
@@ -54,6 +69,7 @@ class YellowDoor extends DoorItem {
 
 
 module.exports = {
+  Door,
   BlueDoor,
   RedDoor,
   GreenDoor,

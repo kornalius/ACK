@@ -4,9 +4,11 @@ const { ITEM_KEY } = require('../../../constants')
 
 class KeyItem extends mix(StackableItem).with(UsableMixin) {
 
+  get isKey () { return true }
+
   get color () { return '' }
 
-  get name () { return _.capitalize(this.color) + ' Key' }
+  get name () { return _.upperFirst(this.color) + ' Key' }
 
   get type () { return ITEM_KEY }
 

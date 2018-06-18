@@ -7,9 +7,9 @@ module.exports = {
   VIDEO_HEIGHT: 240,
   VIDEO_SCALE: 4,
 
-  MAP_WIDTH: 32,
-  MAP_HEIGHT: 32,
-  MAP_DEPTH: 16,
+  MAP_WIDTH: 48,
+  MAP_HEIGHT: 48,
+  MAP_DEPTH: 5,
 
   TILE_WIDTH: 16,
   TILE_HEIGHT: 16,

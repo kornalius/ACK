@@ -10,6 +10,8 @@ class TileObject extends GameObject {
     this.type = type
   }
 
+  get isTile () { return true }
+
   get type () { return this._type }
   set type (value) {
     if (value !== this._type) {

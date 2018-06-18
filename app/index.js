@@ -52,7 +52,7 @@ _.isUUID = function (value) {
 _.addProp = function (instance, name, value, readonly = false, resetFn) {
   let privName = '_' + name
   let proto = Object.getPrototypeOf(instance)
-  let setFn = 'set' + _.capitalize(name)
+  let setFn = 'set' + _.upperFirst(name)
 
   proto.__props = proto.__props || {}
 
@@ -76,6 +76,7 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
     })
 
     proto.__props[name] = { name, privName, value, readonly, resetFn }
+
     instance[privName] = value
   }
 }
