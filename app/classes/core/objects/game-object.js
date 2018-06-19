@@ -17,7 +17,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
       this._sprite.alpha = 0
     }
 
-    this.moveTo(x, y, z, map)
+    this.moveTo(x, y, z, map, false)
   }
 
   get animateMove () { return false }
@@ -62,7 +62,7 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
 
   get spriteFrame () { return undefined }
 
-  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this._animateMove) {
+  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
     if (this._sprite) {
       if (!this._sprite.parent || z !== this._z || map !== this._map) {
         if (this._sprite.parent) {
@@ -79,9 +79,12 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
         let coords = { x: this._sprite.position.x, y: this._sprite.position.y }
         new TWEEN.Tween(coords)
           .to({ x: x * TILE_WIDTH, y: y * TILE_HEIGHT }, 100)
-          .easing(TWEEN.Easing.Quadratic.Out)
+          .easing(TWEEN.Easing.Linear.None)
           .onUpdate(() => {
             this._sprite.position.set(coords.x, coords.y)
+            if (this.isPlayer) {
+              this._map.centerOn(coords.x, coords.y, false)
+            }
             ACK.update()
           })
           .start()
@@ -113,12 +116,12 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
     return map && map.hasLevel(z)
   }
 
-  moveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
+  moveTo (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
     if (this.canMoveTo(x, y, z, map)) {
       this.x = x
       this.y = y
 
-      this.placeSprite(this._x, this._y, z, map)
+      this.placeSprite(this._x, this._y, z, map, animate)
 
       this.map = map
       this.z = z
@@ -128,8 +131,8 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
     return false
   }
 
-  moveBy (x, y, z = 0) {
-    return this.moveTo(this._x + x, this._y + y, this._z + z)
+  moveBy (x, y, z = 0, animate = this.animateMove) {
+    return this.moveTo(this._x + x, this._y + y, this._z + z, this._map, animate)
   }
 
   act (t, delta) {
@@ -160,9 +163,9 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
     return this._x === x && this._y === y && this._z === z && this._map === map
   }
 
-  centerOn () {
+  centerOn (animate = true) {
     if (this._map) {
-      this._map.centerOn(this._x * TILE_WIDTH, this._y * TILE_HEIGHT)
+      this._map.centerOn(this._x * TILE_WIDTH, this._y * TILE_HEIGHT, animate)
     }
   }
 

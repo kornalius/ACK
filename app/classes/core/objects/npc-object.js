@@ -39,10 +39,10 @@ class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
     return super.canMoveTo(x, y, z, map) && map && !map.blockedAt(x, y, z)
   }
 
-  moveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
+  moveTo (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
     let oldTile = this._map ? this._map.tileAt(this._x, this._y, this._z) : undefined
     let oldX = this._x
-    if (super.moveTo(x, y, z, map)) {
+    if (super.moveTo(x, y, z, map, animate)) {
 
       if (this.hasSight) {
         this.updateFov()
