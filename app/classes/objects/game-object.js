@@ -1,9 +1,9 @@
-const { EventsManager } = require('../../../mixins/common/events')
-const { SpriteMixin } = require('../../../mixins/core/sprite')
-const { FlipMixin } = require('../../../mixins/core/flip')
-const { ActMixin } = require('../../../mixins/core/act')
+const { EventsManager } = require('../../mixins/common/events')
+const { SpriteMixin } = require('../../mixins/core/sprite')
+const { FlipMixin } = require('../../mixins/core/flip')
+const { ActMixin } = require('../../mixins/core/act')
 
-const { TILE_WIDTH, TILE_HEIGHT } = require('../../../constants')
+const { TILE_WIDTH, TILE_HEIGHT } = require('../../constants')
 
 class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin, ActMixin) {
 

@@ -32,7 +32,7 @@ const NpcsMixin = Mixin(superclass => class NpcsMixin extends superclass {
   }
 
   addNpcAtRandomPosition (npc, z) {
-    let p = this.getRandomFloorPosition(z)
+    let p = this.randomFloorPosition(z)
     if (p) {
       return this.addNpc(p.x, p.y, z, npc)
     }

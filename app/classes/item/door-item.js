@@ -1,8 +1,8 @@
 const { ActivableItem } = require('./activable-item')
-const { OpenerMixin } = require('../../../mixins/core/opener')
-const { LockerMixin } = require('../../../mixins/core/locker')
-const { UsableWithMixin } = require('../../../mixins/core/usable-with')
-const { ITEM_DOOR } = require('../../../constants')
+const { OpenerMixin } = require('../../mixins/core/opener')
+const { LockerMixin } = require('../../mixins/core/locker')
+const { UsableWithMixin } = require('../../mixins/item/usable-with')
+const { ITEM_DOOR } = require('../../constants')
 
 class DoorItem extends mix(ActivableItem).with(OpenerMixin, LockerMixin, UsableWithMixin) {
 

@@ -1,4 +1,4 @@
-const { KeyItem } = require('../../classes/core/items/key-item')
+const { KeyItem } = require('../../classes/item/key-item')
 
 
 const { BLUE_KEY } = require('../../constants')

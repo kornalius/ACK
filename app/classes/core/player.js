@@ -1,4 +1,4 @@
-const { NpcObject } = require('./objects/npc-object')
+const { NpcObject } = require('../objects/npc-object')
 
 class Player extends NpcObject {
 

@@ -105,7 +105,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     return this.isFloorAt(x, y, z) && _.isEmpty(this.itemsAt(x, y, z)) && _.isEmpty(this.npcsAt(x, y, z))
   }
 
-  getRandomFloorPosition (z, bounds) {
+  randomFloorPosition (z, bounds) {
     if (!bounds) {
       bounds = new PIXI.Rectangle(0, 0, this._width, this._height)
     }
@@ -260,7 +260,7 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
 
     let promise = super.enter(level, x, y)
 
-    let p = !x && !y ? this.getRandomFloorPosition(level) : { x, y }
+    let p = !x && !y ? this.randomPositionInRoom(this.randomRoom(level), level) : { x, y }
     this.player.moveTo(p.x, p.y, level, this, false, false)
     this.player.centerOn()
 

@@ -1,4 +1,4 @@
-const { ActivableItem } = require('../../classes/core/items/activable-item')
+const { ActivableItem } = require('../../classes/item/activable-item')
 const { ITEM_STAIRS } = require('../../constants')
 
 class StairsUp extends ActivableItem {

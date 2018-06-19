@@ -32,7 +32,7 @@ const ItemsMixin = Mixin(superclass => class ItemsMixin extends superclass {
   }
 
   addItemAtRandomPosition (item, z, bounds) {
-    let p = this.getRandomFloorPosition(z, bounds)
+    let p = this.randomFloorPosition(z, bounds)
     if (p) {
       return this.addItemAt(item, p.x, p.y, z)
     }

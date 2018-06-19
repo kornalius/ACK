@@ -1,5 +1,5 @@
 const { GameObject } = require('./game-object')
-const { SLOT_GENERIC } = require('../../../constants')
+const { SLOT_GENERIC } = require('../../constants')
 
 class ItemObject extends GameObject {
 

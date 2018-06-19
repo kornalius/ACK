@@ -1,6 +1,6 @@
 const { StackableItem } = require('./stackable-item')
-const { UsableMixin } = require('../../../mixins/core/usable')
-const { ITEM_KEY } = require('../../../constants')
+const { UsableMixin } = require('../../mixins/item/usable')
+const { ITEM_KEY } = require('../../constants')
 
 class KeyItem extends mix(StackableItem).with(UsableMixin) {
 

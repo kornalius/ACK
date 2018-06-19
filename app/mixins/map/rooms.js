@@ -8,6 +8,14 @@ const RoomsMixin = Mixin(superclass => class RoomsMixin extends superclass {
     this._rooms = undefined
   }
 
+  randomRoom (z) {
+    return this._rooms[z].random()
+  }
+
+  randomPositionInRoom (idx, z) {
+    return this.randomFloorPosition(z, this.roomBounds(idx, z))
+  }
+
   roomBounds (idx, z) {
     let r = _.isNumber(idx) ? this._rooms[z][idx] : idx
     return new PIXI.Rectangle(r.getLeft(), r.getTop(), r.getRight() - r.getLeft(), r.getBottom() - r.getTop())

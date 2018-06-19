@@ -1,6 +1,6 @@
 const { ItemObject } = require('./item-object')
-const { ContainerMixin } = require('../../../mixins/core/container')
-const { SightMixin } = require('../../../mixins/core/sight')
+const { ContainerMixin } = require('../../mixins/container/container')
+const { SightMixin } = require('../../mixins/npc/sight')
 
 class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
 

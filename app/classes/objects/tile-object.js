@@ -1,6 +1,6 @@
 const { GameObject } = require('./game-object')
 
-const { TILE_FLOOR, TILE_WALL } = require('../../../constants')
+const { TILE_FLOOR, TILE_WALL } = require('../../constants')
 
 class TileObject extends GameObject {
 

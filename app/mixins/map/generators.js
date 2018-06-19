@@ -1,4 +1,4 @@
-const { TileObject } = require('../../classes/core/objects/tile-object')
+const { TileObject } = require('../../classes/objects/tile-object')
 
 const { StairsUp, StairsDown } = require('../../game/items/stairs')
 const { Door, RedDoor, BlueDoor, GreenDoor, YellowDoor } = require('../../game/items/doors')

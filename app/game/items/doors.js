@@ -1,4 +1,4 @@
-const { DoorItem } = require('../../classes/core/items/door-item')
+const { DoorItem } = require('../../classes/item/door-item')
 
 
 const { ITEM_DOOR } = require('../../constants')
