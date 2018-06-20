@@ -1,8 +1,10 @@
 const { ItemObject } = require('./item-object')
 const { ContainerMixin } = require('../../mixins/container/container')
 const { SightMixin } = require('../../mixins/npc/sight')
+const { IdentityMixin } = require('../../mixins/npc/identity')
+const { JobMixin } = require('../../mixins/npc/job')
 
-class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin) {
+class NpcObject extends mix(ItemObject).with(ContainerMixin, SightMixin, IdentityMixin, JobMixin) {
 
   get isNpc () { return true }
 

@@ -1,5 +1,5 @@
-const { EventsManager } = require('../../../mixins/common/events')
-const { ActMixin } = require('../../../mixins/core/act')
+const { EventsManager } = require('../../mixins/common/events')
+const { ActMixin } = require('../../mixins/core/act')
 
 class NeutralBehavior extends mix(Object).with(EventsManager, ActMixin) {
 
