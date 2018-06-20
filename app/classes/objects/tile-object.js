@@ -40,9 +40,13 @@ class TileObject extends GameObject {
   get lightBlocked () { return this._type === TILE_WALL }
 
   enter (npc) {
+    if (!this.isPaused) {
+    }
   }
 
   exit (npc) {
+    if (!this.isPaused) {
+    }
   }
 
 }

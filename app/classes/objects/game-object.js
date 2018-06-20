@@ -1,11 +1,13 @@
 const { EventsManager } = require('../../mixins/common/events')
+const { StateMixin } = require('../../mixins/core/state')
+const { EnableMixin } = require('../../mixins/common/enable')
 const { SpriteMixin } = require('../../mixins/core/sprite')
 const { FlipMixin } = require('../../mixins/core/flip')
 const { ActMixin } = require('../../mixins/core/act')
 
 const { TILE_WIDTH, TILE_HEIGHT } = require('../../constants')
 
-class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin, ActMixin) {
+class GameObject extends mix(Object).with(EventsManager, EnableMixin, StateMixin, SpriteMixin, FlipMixin, ActMixin) {
 
   constructor (x, y, z, map) {
     super()
@@ -104,6 +106,10 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
     this._y = 0
     this._z = 0
     this._map = undefined
+
+    if (this.enabled) {
+      this.start()
+    }
   }
 
   get blocked () { return false }
@@ -136,7 +142,9 @@ class GameObject extends mix(Object).with(EventsManager, SpriteMixin, FlipMixin,
   }
 
   act (t, delta) {
-    super.act(t, delta)
+    if (!this.isPaused) {
+      super.act(t, delta)
+    }
   }
 
   getNeighborPositions (x, y) {
