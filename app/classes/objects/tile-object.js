@@ -8,6 +8,7 @@ class TileObject extends GameObject {
     super(x, y, z, map)
 
     this.type = type
+    this._enabled = false
   }
 
   get isTile () { return true }

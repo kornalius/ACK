@@ -2,7 +2,7 @@ const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/common/state')
 const { ActMixin } = require('../../mixins/core/act')
 
-let Scene = class Scene extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
+class Scene extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
     super()

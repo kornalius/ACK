@@ -4,7 +4,7 @@ const { ActMixin } = require('../../mixins/core/act')
 
 const { COMPLETED, FAILED } = require('../../constants')
 
-let Quest = class Quest extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
+class Quest extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
     super()

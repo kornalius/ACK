@@ -1,13 +1,14 @@
 const { EventsManager } = require('../../mixins/common/events')
-const { StateMixin } = require('../../mixins/core/state')
+const { StateMixin } = require('../../mixins/common/state')
 const { EnableMixin } = require('../../mixins/common/enable')
 const { SpriteMixin } = require('../../mixins/core/sprite')
+const { PositionMixin } = require('../../mixins/core/position')
 const { FlipMixin } = require('../../mixins/core/flip')
 const { ActMixin } = require('../../mixins/core/act')
 
 const { TILE_WIDTH, TILE_HEIGHT } = require('../../constants')
 
-class GameObject extends mix(Object).with(EventsManager, EnableMixin, StateMixin, SpriteMixin, FlipMixin, ActMixin) {
+class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMixin, StateMixin, SpriteMixin, FlipMixin, ActMixin) {
 
   constructor (x, y, z, map) {
     super()
@@ -24,88 +25,18 @@ class GameObject extends mix(Object).with(EventsManager, EnableMixin, StateMixin
 
   get animateMove () { return false }
 
-  get x () { return this._x }
-  set x (value) {
-    if (value !== this._x) {
-      let old = this._x
-      this._x = value
-      this.emit('x-change', { value, old })
-    }
-  }
-
-  get y () { return this._y }
-  set y (value) {
-    if (value !== this._y) {
-      let old = this._y
-      this._y = value
-      this.emit('y-change', { value, old })
-    }
-  }
-
-  get z () { return this._z }
-  set z (value) {
-    if (value !== this._z) {
-      let old = this._z
-      this._z = value
-      this.emit('z-change', { value, old })
-    }
-  }
-
-  get map () { return this._map }
-  set map (value) {
-    if (value !== this._map) {
-      let old = this._map
-      this._map = value
-      this.emit('map-change', { value, old })
-    }
-  }
-
   get name () { return 'Object' }
 
   get spriteFrame () { return undefined }
 
   placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
-    if (this._sprite) {
-      if (!this._sprite.parent || z !== this._z || map !== this._map) {
-        if (this._sprite.parent) {
-          this._sprite.parent.removeChild(this._sprite)
-          this._map.update()
-        }
-        if (map && map.hasLevel(z)) {
-          map.levels[z].addChild(this._sprite)
-          map.update()
-        }
-      }
-
-      if (animate) {
-        let coords = { x: this._sprite.position.x, y: this._sprite.position.y }
-        new TWEEN.Tween(coords)
-          .to({ x: x * TILE_WIDTH, y: y * TILE_HEIGHT }, 100)
-          .easing(TWEEN.Easing.Linear.None)
-          .onUpdate(() => {
-            this._sprite.position.set(coords.x, coords.y)
-            if (this.isPlayer) {
-              this._map.centerOn(coords.x, coords.y, false)
-            }
-            ACK.update()
-          })
-          .start()
-      }
-      else {
-        this._sprite.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
-      }
-    }
+    super.placeSprite(x * TILE_WIDTH, y * TILE_HEIGHT, z, map, animate)
   }
 
   reset () {
+    super.reset()
+
     _.resetProps(this)
-
-    this.destroySprite()
-
-    this._x = 0
-    this._y = 0
-    this._z = 0
-    this._map = undefined
 
     if (this.enabled) {
       this.start()
@@ -118,31 +49,8 @@ class GameObject extends mix(Object).with(EventsManager, EnableMixin, StateMixin
 
   get lightBlocked () { return false }
 
-  canMoveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
-    return map && map.hasLevel(z)
-  }
-
-  moveTo (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
-    if (this.canMoveTo(x, y, z, map)) {
-      this.x = x
-      this.y = y
-
-      this.placeSprite(this._x, this._y, z, map, animate)
-
-      this.map = map
-      this.z = z
-
-      return true
-    }
-    return false
-  }
-
-  moveBy (x, y, z = 0, animate = this.animateMove) {
-    return this.moveTo(this._x + x, this._y + y, this._z + z, this._map, animate)
-  }
-
   act (t, delta) {
-    if (!this.isPaused) {
+    if (this.isRunning) {
       super.act(t, delta)
     }
   }
@@ -160,15 +68,8 @@ class GameObject extends mix(Object).with(EventsManager, EnableMixin, StateMixin
     return tiles.randomize()
   }
 
-  distanceFrom (target) {
-    if (this._map === target._map && this._z === target.z) {
-      return new PIXI.Point(this._x, this._y).distance(new PIXI.Point(target.x, target.y))
-    }
-    return NaN
-  }
-
-  isAt (x = this._x, y = this._y, z = this._z, map = this._map) {
-    return this._x === x && this._y === y && this._z === z && this._map === map
+  inView (rect) {
+    return rect.contains(this._x, this._y)
   }
 
   centerOn (animate = true) {

@@ -18,6 +18,7 @@
     "performance-now": "^2.1.0",
     "pixi.js": "^4.8.1",
     "raf": "^3.4.0",
+    "rantjs": "^1.0.10",
     "rot-js": "^0.6.5",
     "tween.js": "^16.6.0",
     "underscore-deep-extend": "^1.1.5",

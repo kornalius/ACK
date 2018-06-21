@@ -14,7 +14,11 @@ const { Player } = require('./player')
 
 const { PlayScene } = require('../../game/scenes/play-scene')
 
-let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
+const { Words } = require('./words')
+
+const { getFont, loadFonts } = require('./font')
+
+class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
     super()
@@ -27,6 +31,8 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
 
     this._scene = undefined
     this._scenes = {}
+
+    this._words = new Words()
 
     this.reset()
 
@@ -74,11 +80,17 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   get scene () { return this._scene }
   get scenes () { return this._scenes }
 
+  get words () { return this._words }
+
   get pauseInput () { return this._pauseInput }
   set pauseInput (value) {
     if (value !== this._pauseInput) {
       this._pauseInput = value
     }
+  }
+
+  font (name) {
+    return getFont(name)
   }
 
   reset () {
@@ -218,7 +230,9 @@ let Game = class Game extends mix(Object).with(EventsManager, StateMixin, ActMix
   load (cb) {
     PIXI.loader
       .add('../static/sprites/sprites.json')
-      .load(() => cb.call(this))
+      .load(async () => {
+        loadFonts().then(cb.bind(this))
+      })
   }
 
 }

@@ -35,8 +35,15 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   }
 
   push (obj) {
-    this._queue.push(obj)
-    this.emit('push', obj)
+    if (_.isArray(obj)) {
+      for (let o of obj) {
+        this.push(o)
+      }
+    }
+    else {
+      this._queue.push(obj)
+      this.emit('push', obj)
+    }
   }
 
   pull (obj) {
@@ -50,9 +57,16 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     let c = this._current
     if (c && t - c.last >= c.duration) {
       let obj = this._queue.shift()
+      let duration = 0
+      if (_.isFunction(obj)) {
+        duration = obj(t) || 0
+      }
+      else {
+        duration = obj.act(t) || 0
+      }
       this._current = {
         obj,
-        duration: obj.act(t) || 0,
+        duration,
         last: t,
       }
     }

@@ -16,9 +16,12 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
     this._eyes = undefined
     this._hair = undefined
     this._build = undefined
+    this._isStrong = false
     this._height = undefined
+    this._isTall = false
     this._childhoodWealth = undefined
     this._wealth = undefined
+    this._isWealthy = false
     this._interests = undefined
     this._moods = undefined
     this._userName = undefined
@@ -37,11 +40,6 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
   get isMale () { return this._sex === 'M' }
   get isFemale () { return this._sex === 'F' }
 
-  get subjectivePronoun () { return this.isFemale ? 'she' : 'he' }
-  get possesivePronoun () { return this.isFemale ? 'her' : 'his' }
-  get objectivePronoun () { return this.isFemale ? 'her' : 'him' }
-  get reflexivePronoun () { return this.isFemale ? 'herself' : 'himself' }
-
   get firstName () {
     if (!this._firstName) {
       this._firstName = faker.name.firstName(this.sex)
@@ -57,10 +55,6 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
   }
 
   get name () { return this.prefix + this.firstName + ' ' + this.lastName }
-
-  get prefix () {
-    return this.isAdult ? (this.isMale ? 'Mr' : 'Mrs') : ''
-  }
 
   get isChild () { return this.age < 18 }
   get isAdult () { return this.age >= 18 }
@@ -79,85 +73,77 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
 
   get ethnicity () {
     if (!this._ethnicity) {
-      this._ethnicity = _.sample(['African', 'Haitian', 'American', 'Canadian', 'Russian', 'Arab', 'Albanian', 'Armenian', 'Bulgarian', 'Dutch', 'French', 'German', 'Chinese', 'Japanese', 'Hungarian', 'Italian', 'Korean', 'Cuban', 'Norwegian', 'Romanian', 'Scottish', 'Slovakian', 'Somalian', 'Turk', 'Vietnamese'])
+      this._ethnicity = _.sample(ACK.words.ethnicities)
     }
     return this._ethnicity
   }
 
   get color () {
     if (!this._color) {
-      this._color = _.sample(['Light black', 'Black', 'Deep black', 'Pale white', 'White', 'Light brown', 'Brown', 'Deep brown', 'Yellow'])
+      this._color = _.sample(ACK.words.skinColors)
     }
     return this._color
   }
 
   get eyes () {
     if (!this._eyes) {
-      this._eyes = _.sample(['Black', 'Grey', 'Blue', 'Light blue', 'Teal', 'Green', 'Light green', 'Brown', 'Amber', 'Hazel', 'Dark blue', 'Dark green'])
+      this._eyes = ACK.words.adjective(ACK.words.colorAdjectives) + _.sample(ACK.words.eyeColors)
     }
     return this._eyes
   }
 
   get hair () {
     if (!this._hair) {
-      this._hair = _.sample(['Brown', 'Grey', 'White', 'Black', 'Orange', 'Auburn', 'Blond', 'Light brown', 'Dark brown', 'Chestnut'])
+      this._hair = ACK.words.adjective(ACK.words.colorAdjectives) + _.sample(ACK.words.hairColors)
     }
     return this._hair
   }
 
   get build () {
     if (!this._build) {
-      this._build = _.sample(['Very skinny', 'Skinny', 'Average weight', 'Pudgy', 'Fat', 'Obese', 'Brawny', 'Muscular', 'Lean', 'Weak'])
+      let s = _.sample(ACK.words.buildSizes)
+      this._build = ACK.words.adverb() + s
+      this._isStrong = _.includes(ACK.words.largeSizes, s)
     }
     return this._build
   }
 
+  get isWeak () { return !this._isStrong }
+  get isStrong () { return this._isStrong }
+
   get height () {
     if (!this._height) {
-      this._height = _.sample(['Stunted', 'Short', 'Average', 'Above average', 'Tall'])
+      let h = _.sample(ACK.words.height)
+      this._height = ACK.words.adverb() + h
+      this._isTall = _.includes(ACK.words.tall, h)
     }
     return this._height
   }
 
+  get isShort () { return !this._isTall }
+  get isTall () { return this._isTall }
+
   get childhoodWealth () {
     if (!this._childhoodWealth) {
-      this._childhoodWealth = _.sample(['Extremely poor', 'Poor', 'Low income', 'Middle class', 'Upper class', 'Extremely wealthy'])
+      this._childhoodWealth = ACK.words.adverb() + _.sample(ACK.words.wealth)
     }
     return this._childhoodWealth
   }
 
   get wealth () {
     if (!this._wealth) {
-      this._wealth = _.sample(['Extremely poor', 'Poor', 'Low income', 'Middle class', 'Upper class', 'Extremely wealthy'])
+      let w = _.sample(ACK.words.wealth)
+      this._wealth = ACK.words.adverb() + w
+      this._isWealthy = _.includes(ACK.words.rich, w)
     }
     return this._wealth
-  }
-
-  get _socialInterests () {
-    return ['Flirting', 'Networking', 'People', 'Helping', 'Listening', 'Talking']
-  }
-
-  get _politicalInterests () {
-    return ['Government', 'Freedom', 'Truth', 'Leading']
-  }
-
-  get _workInterests () {
-    return ['Crafting', 'Exploring', 'Working', 'Building', 'Learning', 'Exercise']
-  }
-
-  get _hobbyInterests () {
-    return ['Nature', 'Cities', 'Animals', 'Food', 'Sunshine']
-  }
-
-  get _badInterests () {
-    return ['Fighting', 'Lying', 'Drinking', 'Stealing', 'Vandalism', 'Storms', 'Slacking']
   }
 
   get interests () {
     if (!this._interests) {
       this._interests = []
       for (let i = 0; i < _.random(3); i++) {
-        this._interests.push(_.sample(_.concat(this._socialInterests, this._politicalInterests, this._workInterests, this._badInterests)))
+        this._interests.push(ACK.words.adverb() + _.sample(_.concat(ACK.words.socialInterests, ACK.words.politicalInterests, ACK.words.workInterests, ACK.words.badInterests)))
       }
     }
     return this._interests
@@ -165,104 +151,68 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
 
   get motive () {
     if (!this._motive) {
-      this._motive = _.sample(['Money', 'Love', 'Fate', 'Sickness', 'Glory', 'Revenge'])
+      this._motive = _.sample(ACK.words.motives)
     }
     return this._motive
-  }
-
-  get _happyMoods () {
-    return ['Cheerful', 'Content', 'Ecstatic', 'Happy', 'Joyful', 'Jubilant', 'Pleased', 'Gentle', 'Good', 'Peaceful', 'Sympathetic', 'Thoughtful']
-  }
-
-  get _sadMoods () {
-    return ['Annoyed', 'Apathetic', 'Ashamed', 'Bittersweet', 'Bored', 'Cynical', 'Depressed', 'Discontent', 'Pessimistic', 'Sad']
-  }
-
-  get _angryMoods () {
-    return ['Aggravated', 'Angry', 'Cranky', 'Enraged', 'Frustrated', 'Grumpy', 'Infuriated', 'Irritated', 'Mad']
-  }
-
-  get _energeticMoods () {
-    return ['Energetic', 'Excited', 'High', 'Hyper', 'Intense', 'Lively']
-  }
-
-  get _tiredMoods () {
-    return ['Drained', 'Exhausted', 'Lazy', 'Lethargic', 'Morose', 'Sleepy']
-  }
-
-  get _dangerousMoods () {
-    return ['Chaotic', 'Crazy', 'Demented', 'Predatory', 'Psychotic']
-  }
-
-  get _calmMoods () {
-    return ['Calm', 'Chilled', 'Relaxed']
-  }
-
-  get _stressedMoods () {
-    return ['Anxious', 'Cautious', 'Defensive', 'Paranoid', 'Scared', 'Stressed', 'Shocked']
-  }
-
-  get _stateMoods () {
-    return ['Cold', 'Confused', 'Curious', 'Delusional', 'Dorky', 'Empathetic', 'Envious', 'Fearful', 'Impatient', 'Indifferent', 'Melancholic', 'Mellow', 'Passionate', 'Rebellious', 'Rejected', 'Strange', 'Weird']
   }
 
   get moods () {
     if (!this._moods) {
       if (_.random(100) > 40) {
-        this.moods.push(_.sample(this._happyMoods))
+        this.moods.push(ACK.words.adverb() + _.sample(ACK.words.happyMoods))
       }
       else {
-        this.moods.push(_.sample(this._sadMoods))
+        this.moods.push(ACK.words.adverb() + _.sample(ACK.words.sadMoods))
       }
 
       if (_.random(100) > 50) {
         if (this.isHappy) {
-          this.moods.push(_.sample(this._energeticMoods))
+          this.moods.push(ACK.words.adverb() + _.sample(ACK.words.energeticMoods))
         }
         else {
-          this.moods.push(_.sample(this._tiredMoods))
+          this.moods.push(ACK.words.adverb() + _.sample(ACK.words.tiredMoods))
         }
       }
 
       if (!this.isHappy) {
         if (_.random(100) > 60) {
-          this.moods.push(_.sample(this._angryMoods))
+          this.moods.push(ACK.words.adverb() + _.sample(ACK.words.angryMoods))
           if (_.random(100) > 75) {
-            this.moods.push(_.sample(this._dangerousMoods))
+            this.moods.push(ACK.words.adverb() + _.sample(ACK.words.dangerousMoods))
           }
         }
       }
 
       if (_.random(100) > 60) {
-        this.moods.push(_.sample(this._calmMoods))
+        this.moods.push(ACK.words.adverb() + _.sample(ACK.words.calmMoods))
       }
       else {
-        this.moods.push(_.sample(this._stressedMoods))
+        this.moods.push(ACK.words.adverb() + _.sample(ACK.words.stressedMoods))
       }
 
-      this._moods = _.sample(this._stateMoods)
+      this._moods = ACK.words.adverb() + _.sample(ACK.words.stateMoods)
     }
     return this._moods
   }
 
   get isNice () {
-    return _.includes(_.flatten(this._moods), this._happyMoods)
+    return _.includes(_.flatten(this._moods), ACK.words.happyMoods)
   }
 
   get isBad () {
-    return _.includes(_.flatten(this._moods), this._happyMoods)
+    return _.includes(_.flatten(this._moods), ACK.words.happyMoods)
   }
 
   get isHappy () {
-    return _.includes(_.flatten(this._moods), this._happyMoods)
+    return _.includes(_.flatten(this._moods), ACK.words.happyMoods)
   }
 
   get isSad () {
-    return this.isAngry || _.includes(_.flatten(this._moods), this._sadMoods)
+    return this.isAngry || _.includes(_.flatten(this._moods), ACK.words.sadMoods)
   }
 
   get isAngry () {
-    return _.includes(_.flatten(this._moods), this._angryMoods)
+    return _.includes(_.flatten(this._moods), ACK.words.angryMoods)
   }
 
   get userName () {
@@ -281,7 +231,7 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
 
   get intelligence () {
     if (!this._intelligence) {
-      this._intelligence = _.sample(['Smart', 'Dumb', 'Stupid', 'Intelligent', 'Average', 'Slow', 'Fast', 'Bright', 'Sharp', 'Intellectual', 'Clever', 'Ignorant', 'Simple', 'Idiot', 'Thick'])
+      this._intelligence = _.sample(ACK.words.intelligence)
     }
     return this._intelligence
   }
@@ -289,19 +239,18 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
   get traits () {
     if (!this._traits) {
       this._traits = []
-      this._traits.push(_.sample(['Curious', 'Studious', 'Mysterious', 'Rough', 'Silent', 'Skeptic', 'Immature', 'Materialistic', 'Dreamy', 'Creative', 'Romantic', 'Frivolous', 'Aloof']))
-      this._traits.push(_.sample(['Introvert', 'Extrovert']))
-      this._traits.push(_.sample(['Leader', 'Follower']))
-      this._traits.push(_.sample(['Emotional', 'Emotionless']))
-
-      this._traits.push(_.sample(['Humorous', 'Grim']))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(1)))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(2)))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(3)))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(4)))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(5)))
 
       if (_.includes(this.mood, [''])) {
-        this._traits.push('Aggresive')
+        this._traits.push(ACK.words.adverb() + 'aggresive')
       }
 
-      this._traits.push(_.sample(['Selfsufficent', 'Dependent']))
-      this._traits.push(_.sample(['Logical', 'Illogical']))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(6)))
+      this._traits.push(ACK.words.adverb() + _.sample(ACK.words.traits(7)))
     }
     return this._traits
   }

@@ -9,9 +9,10 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
     _.addProp(this, 'lightDirection', -1)
     _.addProp(this, 'needsRecomputeLight', true)
 
-    this._prevSprites = []
+    this._lightSprites = []
+    this._lightPositions = []
 
-    this._fov = new ACK.ROT.FOV.RecursiveShadowcasting((x, y) => this._map.tileAt(x, y, this._z) && this._map.lightBlockedAt(x, y, this._z))
+    this._lightCaster = new ACK.ROT.FOV.RecursiveShadowcasting((x, y) => this._map.tileAt(x, y, this._z) && this._map.lightBlockedAt(x, y, this._z))
   }
 
   get isLightDiffuser () { return true }
@@ -32,38 +33,52 @@ const LightDiffuserMixin = Mixin(superclass => class LightDiffuserMixin extends 
     this._needsRecomputeLight = true
   }
 
+  get lightPositions () { return this._lightPositions }
+
   act (t, delta) {
     let pt = PIXI.Point(this._x, this._y)
     let intensity = this._lightIntensity
 
     const c = (x, y, radius, visibility) => {
-      let d = pt.distance(PIXI.Point(x, y))
+      let p = new PIXI.Point(x, y)
+      let d = pt.distance(p)
       let i = intensity * (d / this._lightRadius)
       let sprites = this._map.spritesAt(this._x, this._y, this._z)
       for (let sprite of sprites) {
         sprite.tint = this._lightColor
         sprite.alpha = i
       }
-      this._prevSprites = _.concat(this._prevSprites, sprites)
+      this._lightSprites = _.concat(this._lightSprites, sprites)
+      this._lightPositions.push(p)
     }
 
     if (this._needsRecomputeLight) {
-      for (let sprite of this._prevSprites) {
+      for (let sprite of this._lightSprites) {
         sprite.tint = 0xFFFFFF
         sprite.alpha = 1
       }
 
-      this._prevSprites = []
+      this._lightSprites = []
+      this._lightPositions = []
 
       if (this._lightDirection === -1) {
-        this._fov.compute(this._x, this._y, this._lightRadius, c)
+        this._lightCaster.compute(this._x, this._y, this._lightRadius, c)
       }
       else {
-        this._fov.compute90(this._x, this._y, this._lightRadius, this._lightDirection, c)
+        this._lightCaster.compute90(this._x, this._y, this._lightRadius, this._lightDirection, c)
       }
 
       this._map.update()
     }
+  }
+
+  inView (rect) {
+    for (let p of this.lightPositions) {
+      if (rect.contains(p)) {
+        return true
+      }
+    }
+    return false
   }
 
 })

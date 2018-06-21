@@ -12,7 +12,9 @@ const { GeneratorsMixin } = require('../../mixins/map/generators')
 
 const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_FLOOR } = require('../../constants')
 
-let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, GeneratorsMixin) {
+const { TextObject } = require('../objects/text-object')
+
+class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, GeneratorsMixin) {
 
   constructor (width, height, depth = 1) {
     super()
@@ -264,6 +266,8 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     this.player.moveTo(p.x, p.y, level, this, false, false)
     this.player.centerOn()
 
+    let t = this.drawText(p.x * TILE_WIDTH, p.y * TILE_HEIGHT - TILE_HEIGHT, 0, 'HELLO WORLD!', ACK.font('normal_bold'))
+
     return promise
   }
 
@@ -271,6 +275,10 @@ let Map = class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin
     return super.exit(level).then(() => {
       this._container.removeChildren()
     })
+  }
+
+  drawText (x, y, z, text, font, color = 0xffffffff) {
+    return new TextObject(x, y, z, this, text, font, color)
   }
 
 }
