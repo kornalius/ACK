@@ -18,28 +18,36 @@ const StateMixin = Mixin(superclass => class StateMixin extends superclass {
     if (this.isStopped) {
       this._state = RUNNING
       this.emit('start')
+      return true
     }
+    return false
   }
 
   stop () {
     if (!this.isStopped) {
       this._state = STOPPED
       this.emit('stop')
+      return true
     }
+    return false
   }
 
   pause () {
     if (!this.isPaused && !this.isStopped) {
       this._state = PAUSED
       this.emit('pause')
+      return true
     }
+    return false
   }
 
   resume () {
     if (this.isPaused) {
       this._state = RUNNING
       this.emit('resume')
+      return true
     }
+    return false
   }
 
 })
