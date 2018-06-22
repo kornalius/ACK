@@ -66,7 +66,7 @@ const createWindow = function () {
 
   // Open the DevTools.
   if (isDev) {
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     // require('devtron').install()
 
@@ -77,14 +77,13 @@ const createWindow = function () {
     //     .then(name => console.log(`Added Extension:  ${name}`))
     //     .catch(err => console.log('An error occurred: ', err))
     // }
+    // installPixiDevTool()
 
     // var installInsight = () => {
     //   installExtension('djdcbmfacaaocoomokenoalbomllhnko')
     //     .then(name => console.log(`Added Extension:  ${name}`))
     //     .catch(err => console.log('An error occurred: ', err))
     // }
-
-    // installPixiDevTool()
     // installInsight()
   }
 
