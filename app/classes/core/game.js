@@ -7,6 +7,7 @@ const { ActMixin } = require('../../mixins/core/act')
 
 const { Video } = require('../video/video')
 
+const { ActionManager } = require('./action-manager')
 const { Scheduler } = require('./scheduler')
 const { Cursor } = require('../ui/cursor')
 
@@ -18,6 +19,11 @@ const { Words } = require('./words')
 
 const { getFont, loadFonts } = require('./font')
 
+const { SpriteAction } = require('../actions/sprite-action')
+const { ObjectAction } = require('../actions/object-action')
+const { TextAction } = require('../actions/text-action')
+const { DestroyAction } = require('../actions/destroy-action')
+
 class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
@@ -26,6 +32,7 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     this._ticks = []
 
     this._scheduler = new Scheduler()
+    this._actionManager = new ActionManager()
     this._video = new Video()
     this._cursor = new Cursor()
 
@@ -117,6 +124,8 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     if (this.isStopped) {
       this.reset()
 
+      this._actionManager.start()
+
       this.actSpeed = 100
 
       this._player = new Player()
@@ -133,6 +142,7 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   stop () {
     this._cursor.stop()
+    this._actionManager.stop()
 
     super.stop()
   }
@@ -176,7 +186,7 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
       super.tick(t, delta)
 
-      TWEEN.update(t)
+      TWEEN.update()
 
       for (let tt of this._ticks) {
         tt.tick(t, delta)
@@ -233,6 +243,35 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
       .load(async () => {
         loadFonts().then(cb.bind(this))
       })
+  }
+
+  addAction (...actions) {
+    for (let action of actions) {
+      if (_.isArray(action)) {
+        for (let a of actions) {
+          this._actionManager.add(a)
+        }
+      }
+      else {
+        this._actionManager.add(action)
+      }
+    }
+  }
+
+  spriteAction (options) {
+    return new SpriteAction(options)
+  }
+
+  objectAction (options) {
+    return new ObjectAction(options)
+  }
+
+  textAction (options) {
+    return new TextAction(options)
+  }
+
+  destroyAction (options) {
+    return new DestroyAction(options)
   }
 
 }

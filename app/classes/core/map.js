@@ -227,15 +227,16 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
   scrollTo (x, y, animate = true) {
     let c = this._container
     if (animate) {
-      let coords = { x: c.position.x, y: c.position.y }
-      new TWEEN.Tween(coords)
-        .to({ x, y }, 250)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onUpdate(() => {
-          c.position.set(coords.x, coords.y)
-          ACK.update()
+      ACK.addAction(
+        ACK.spriteAction({
+          instance: c,
+          auto: true,
+          ease: 'quadratic-out',
+          duration: 250,
+          start: { x: c.position.x, y: c.position.y },
+          end: { x, y },
         })
-        .start()
+      )
     }
     else {
       c.position.set(x, y)
@@ -266,7 +267,24 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
     this.player.moveTo(p.x, p.y, level, this, false, false)
     this.player.centerOn()
 
-    let t = this.drawText(p.x * TILE_WIDTH, p.y * TILE_HEIGHT - TILE_HEIGHT, 0, 'HELLO WORLD!', ACK.font('normal_bold'))
+    let t = this.drawText(p.x * TILE_WIDTH, p.y * TILE_HEIGHT - TILE_HEIGHT, 0, '', ACK.font('normal_bold'))
+    ACK.addAction([
+      ACK.textAction({
+        instance: t,
+        auto: true,
+        delay: 3000,
+        duration: 2500,
+        ease: 'quadratic-out',
+        start: '',
+        end: 'HELLO WORLD!',
+      }),
+      ACK.destroyAction({
+        instance: t,
+        delay: 1000,
+      }),
+    ])
+
+    this.emit('enter-map')
 
     return promise
   }
@@ -274,6 +292,7 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
   exit (level) {
     return super.exit(level).then(() => {
       this._container.removeChildren()
+      this.emit('exit-map')
     })
   }
 

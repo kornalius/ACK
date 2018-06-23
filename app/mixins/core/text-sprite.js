@@ -27,6 +27,9 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
       width = Math.max(width, line.length * cw)
     }
 
+    width = Math.max(1, width)
+    height = Math.max(1, height)
+
     let c = new PIXI.CanvasRenderTarget(width, height)
     let ctx = c.canvas.getContext('2d', { alpha: true, antialias: false })
 

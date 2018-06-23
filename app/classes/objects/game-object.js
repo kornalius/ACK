@@ -5,6 +5,7 @@ const { SpriteMixin } = require('../../mixins/core/sprite')
 const { PositionMixin } = require('../../mixins/core/position')
 const { FlipMixin } = require('../../mixins/core/flip')
 const { ActMixin } = require('../../mixins/core/act')
+const { ActionGroup } = require('../core/action-group')
 
 const { TILE_WIDTH, TILE_HEIGHT } = require('../../constants')
 
@@ -29,9 +30,11 @@ class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMi
 
   get spriteFrame () { return undefined }
 
-  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
-    super.placeSprite(x * TILE_WIDTH, y * TILE_HEIGHT, z, map, animate)
-  }
+  get blocked () { return false }
+
+  get sightBlocked () { return false }
+
+  get lightBlocked () { return false }
 
   reset () {
     super.reset()
@@ -43,16 +46,18 @@ class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMi
     }
   }
 
-  get blocked () { return false }
-
-  get sightBlocked () { return false }
-
-  get lightBlocked () { return false }
+  destroy () {
+    super.destroySprite()
+  }
 
   act (t, delta) {
     if (this.isRunning) {
       super.act(t, delta)
     }
+  }
+
+  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
+    super.placeSprite(x * TILE_WIDTH, y * TILE_HEIGHT, z, map, animate)
   }
 
   getNeighborPositions (x, y) {
@@ -81,6 +86,17 @@ class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMi
   updateSpriteFrame () {
     this.updateSprite(this.spriteFrame)
     ACK.update()
+  }
+
+  action (actionClass, options) {
+    return new actionClass(_.extend(options, { instance: this }))
+  }
+
+  group (actions) {
+    for (let action of actions) {
+      action.options.instance = this
+    }
+    return new ActionGroup(actions)
   }
 
 }

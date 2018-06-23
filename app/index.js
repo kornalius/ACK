@@ -76,9 +76,9 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
     })
 
     proto.__props[name] = { name, privName, value, readonly, resetFn }
-
-    instance[privName] = value
   }
+
+  instance[privName] = value
 }
 
 _.removeProp = function (instance, name) {

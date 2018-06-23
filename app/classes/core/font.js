@@ -192,7 +192,7 @@ class Font extends Emitter {
       this._char_size = this.width * this.height
       this._size = this.count * this._char_size
 
-      this._array = new window.Uint8Array(this._count)
+      this._array = new window.Uint8Array(this._size)
 
       let baseline = this.ascent + this.descent + this.offsety
       let cw = this.width

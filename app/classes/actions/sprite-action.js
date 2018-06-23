@@ -3,7 +3,7 @@ const { Action } = require('../core/action')
 
 class SpriteAction extends Action {
 
-  update (data) {
+  _setValue (data) {
     let i = this.instance
     if (i instanceof GameObject) {
       i = i.sprite
@@ -11,17 +11,26 @@ class SpriteAction extends Action {
 
     for (let key in data) {
       switch (key) {
-        case 'position':
-          i.position.set(data.position.x, data.position.y)
+        case 'x':
+          i.position.x = data.x
           break
-        case 'scale':
-          i.scale.set(data.scale.x, data.scale.y)
+        case 'y':
+          i.position.y = data.y
+          break
+        case 'scaleX':
+          i.scale.x = data.scaleX
+          break
+        case 'scaleY':
+          i.scale.y = data.scaleY
           break
         case 'rotation':
           i.rotation = data.rotation
           break
-        case 'skew':
-          i.skew.set(data.skew.x, data.skew.y)
+        case 'skewX':
+          i.skew.x = data.skewX
+          break
+        case 'skewY':
+          i.skew.y = data.skewY
           break
         case 'alpha':
           i.alpha = data.alpha
@@ -31,6 +40,20 @@ class SpriteAction extends Action {
           break
       }
     }
+
+    ACK.update()
+  }
+
+  start () {
+    if (super.start()) {
+      this._setValue(this.startData)
+      return true
+    }
+    return false
+  }
+
+  update (data) {
+    this._setValue(data)
   }
 
 }

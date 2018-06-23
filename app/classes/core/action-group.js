@@ -1,204 +1,144 @@
 const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/common/state')
-const { ActMixin } = require('../../mixins/core/act')
+const { Action } = require('./action')
 
-class ActionGroup extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
+class ActionGroup extends mix(Object).with(EventsManager, StateMixin) {
 
-  constructor () {
+  constructor (actions = [], options = {}) {
     super()
 
     this.reset()
+
+    this._options = options
+
+    for (let a of actions) {
+      this.add(a)
+    }
   }
 
-  get parent () { return this._parent }
-  get actions () { return this._actions }
-  get groups () { return this._groups }
+  get options () { return this._options }
+  get parent () { return _.get(this._options, 'parent') }
+  get name () { return _.get(this._options, 'name') }
+  get auto () { return _.get(this._options, 'auto', false) }
 
-  get current () { return this._current }
-  get currentIndex () { return _.indexOf(this._actions, this._current) }
-  get currentGroup () { return this.getActionGroup(this._current) }
+  get queue () { return this._queue }
 
-  get time () {
-    let t = 0
-    if (!this.isPaused) {
-      for (let g of this._groups) {
-        t += g.duration + g.delay
-      }
-      for (let a of this._actions) {
-        t += a.duration * a.repeat
+  get playing () {
+    let actions = []
+    for (let q of this._queue) {
+      if (q.isRunning) {
+        actions.push(q)
       }
     }
-    return t
+    return actions
   }
 
   get duration () {
     let t = 0
     if (!this.isPaused) {
-      for (let g of this._groups) {
-        t += g.duration
-      }
-      for (let a of this._actions) {
-        t += (a.duration + a.delay) * a.repeat
+      for (let q of this._queue) {
+        if (q instanceof Action) {
+          t += (q.delay + q.duration) * q.repeat
+        }
+        else if (q instanceof ActionGroup) {
+          t += q.duration
+        }
       }
     }
     return t
   }
 
   reset () {
-    super.reset()
-
-    this._parent = undefined
-    this._actions = []
-    this._groups = []
-    this._current = undefined
+    this._queue = []
   }
 
-  act (t, delta) {
-    super.act(t, delta)
-    if (this._duration > 0) {
-      this.duration -= delta
-      if (this._duration <= 0) {
-        this.stop()
+  inQueue (action) {
+    return _.includes(this._queue, action)
+  }
+
+  add (actions) {
+    if (_.isArray(actions)) {
+      for (let action of actions) {
+        this.add(action)
       }
     }
-  }
-
-  hasAction (action) {
-    return _.includes(this._actions, action)
-  }
-
-  add (actionClass, options) {
-    let action = _.isFunction(actionClass) ? new actionClass(options) : actionClass
-    action._parent = this
-    if (!this.hasAction(action)) {
-      this._actions.push(action)
+    else {
+      let action = actions
+      if (!this.inQueue(action)) {
+        this._queue.push(action)
+        action.options.parent = this
+      }
+      if (action.auto) {
+        action.start()
+      }
     }
-    return action
+
+    return this
   }
 
   remove (action) {
-    action.stop()
-    _.remove(this._actions, action)
-  }
-
-  hasGroup (group) {
-    return _.includes(this._groups, group)
-  }
-
-  addGroup (groupClass) {
-    let group = _.isFunction(groupClass) ? new groupClass() : groupClass
-    group._parent = this
-    if (!this.hasGroup(group)) {
-      this._groups.push(group)
+    if (_.isArray(action)) {
+      for (let a of action) {
+        this.remove(a)
+      }
     }
-    return group
+    else {
+      action.stop()
+      _.pull(this._queue, action)
+    }
+    return this
   }
 
-  removeGroup (group) {
-    group.stop()
-    _.remove(this._groups, group)
+  group (actions, options) {
+    return this.add(new ActionGroup(actions, _.extend(options, { parent: this })))
   }
 
-  group (...actions) {
-    let group = new ActionGroup()
-    group._parent = this
-
-    for (let act of actions) {
-      if (_.isArray(act)) {
-        for (let a of act) {
-          this._actions.push(a)
+  _instanceOverideCall (instance, fnName) {
+    if (instance) {
+      for (let q of this._queue) {
+        if (q instanceof ActionGroup) {
+          q[fnName](instance)
+        }
+        else if (q instanceof Action && (_.isString(instance) && q.name === instance) || q.instance === instance) {
+          q[fnName]()
         }
       }
-      else if (act.isAction) {
-        this._actions.push(act)
-      }
     }
-
-    return group
-  }
-
-  getActionGroup (action) {
-    for (let g of this._groups) {
-      if (_.includes(g.groups, action)) {
-        return g
-      }
-    }
-    return undefined
-  }
-
-  pauseAll (instance) {
-    for (let g of this._groups) {
-      g.pauseAll(instance)
-    }
-    for (let a of this._actions) {
-      if (!instance || a.instance === instance) {
-        a.pause()
-      }
-    }
-  }
-
-  stopAll (instance) {
-    for (let g of this._groups) {
-      g.stopAll(instance)
-    }
-    for (let a of this._actions) {
-      if (!instance || a.instance === instance) {
-        a.stop()
-      }
+    else {
+      super[fnName]()
     }
   }
 
   start () {
-    super.start()
-
-    if (!this._current) {
-      this.next()
+    if (super.start()) {
+      return this.next()
     }
+    return false
   }
 
-  stop () {
-    super.stop()
-
-    if (this._current && this._current.isPlaying) {
-      this._current.stop()
-    }
+  stop (instance) {
+    this._instanceOverideCall(instance, 'stop')
   }
 
-  pause () {
-    super.pause()
-    if (this._current && this._current.isPlaying) {
-      this._current.pause()
-    }
+  pause (instance) {
+    this._instanceOverideCall(instance, 'pause')
   }
 
-  resume () {
-    super.resume()
-    if (this._current && this._current.isPaused) {
-      this._current.resume()
-    }
-  }
-
-  actionIndex (action) {
-    return _.indexOf(this._actions, action)
-  }
-
-  isLastAction (action) {
-    return this.actionIndex(action) === this._actions.length - 1
-  }
-
-  canNext (action) {
-    return !_.isEmpty(this._actions) && !this.isLastAction(action)
+  resume (instance) {
+    this._instanceOverideCall(instance, 'resume')
   }
 
   next () {
-    if (this.canNext(this._current)) {
-      let action = this._actions[this.action]
-      this._current = action
+    for (let q of this._queue) {
+      if (q.isRunning) {
+        return undefined
+      }
+      else if (q.isStopped) {
+        q.start()
+        return q
+      }
     }
-    else {
-      this._current = undefined
-    }
-    return this._current
+    return undefined
   }
 
 }

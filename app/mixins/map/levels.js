@@ -91,20 +91,20 @@ const LevelsMixin = Mixin(superclass => class LevelsMixin extends superclass {
     c.alpha = 0
 
     return new Promise((resolve, reject) => {
-      let value = { alpha: 0.0 }
-      new TWEEN.Tween(value)
-        .to({ alpha: 1.0 }, 500)
-        .easing(TWEEN.Easing.Quadratic.In)
-        .onUpdate(() => {
-          c.alpha = value.alpha
-          ACK.update()
+      ACK.addAction(
+        ACK.spriteAction({
+          instance: c,
+          auto: true,
+          ease: 'quadratic',
+          duration: 500,
+          start: { alpha: 0.0 },
+          end: { alpha: 1.0 },
+          done: () => {
+            this.emit('enter-level', { level })
+            resolve()
+          }
         })
-        .onComplete(() => {
-          resolve()
-        })
-        .start()
-
-      this.emit('enter-level', { level })
+      )
     })
   }
 
@@ -112,22 +112,25 @@ const LevelsMixin = Mixin(superclass => class LevelsMixin extends superclass {
     let c = this.levelContainer(level)
 
     return new Promise((resolve, reject) => {
-      let value = { alpha: 1.0 }
-      new TWEEN.Tween(value)
-        .to({ alpha: 0.0 }, 500)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onUpdate(() => {
-          if (c) {
-            c.alpha = value.alpha
-            ACK.update()
-          }
-        })
-        .onComplete(() => {
-          resolve()
-        })
-        .start()
-
-      this.emit('exit-level', { level })
+      if (!c) {
+        resolve()
+      }
+      else {
+        ACK.addAction(
+          ACK.spriteAction({
+            instance: c,
+            auto: true,
+            ease: 'quadratic',
+            duration: 500,
+            start: { alpha: 1.0 },
+            end: { alpha: 0.0 },
+            done: () => {
+              this.emit('exit-level', { level })
+              resolve()
+            }
+          })
+        )
+      }
     })
   }
 
