@@ -1,19 +1,19 @@
 const RoomsMixin = Mixin(superclass => class RoomsMixin extends superclass {
 
-  get rooms () { return this._rooms }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._rooms = undefined
   }
+
+  get rooms () { return this._rooms }
 
   randomRoom (z) {
     return this._rooms[z].random()
   }
 
-  randomPositionInRoom (idx, z) {
-    return this.randomFloorPosition(z, this.roomBounds(idx, z))
+  randomPositionInRoom (idx, z, iter) {
+    return this.randomFloorPosition(z, this.roomBounds(idx, z), iter)
   }
 
   roomBounds (idx, z) {

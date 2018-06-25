@@ -29,8 +29,6 @@ class Video extends Emitter {
       this.resize()
     })
 
-    this.reset()
-
     setTimeout(() => {
       document.body.appendChild(this._renderer.view)
       this.resize()
@@ -43,10 +41,20 @@ class Video extends Emitter {
   get height () { return this._height }
   get scale () { return this._scale }
 
-  reset () {
-  }
-
   destroy () {
+    if (super.destroy) {
+      super.destroy()
+    }
+
+    if (this._stage) {
+      this._stage.destroy()
+      this._stage = undefined
+    }
+
+    if (this._renderer) {
+      this._renderer.destroy()
+      this._renderer = undefined
+    }
   }
 
   resize () {

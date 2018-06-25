@@ -45,6 +45,10 @@ _.isSize = function (value) {
   return value instanceof Size
 }
 
+_.isColor = function (value) {
+  return value instanceof Color
+}
+
 _.isUUID = function (value) {
   return utils.isUUID(value)
 }
@@ -78,7 +82,9 @@ _.addProp = function (instance, name, value, readonly = false, resetFn) {
     proto.__props[name] = { name, privName, value, readonly, resetFn }
   }
 
-  instance[privName] = value
+  if (_.isUndefined(instance[privName])) {
+    instance[privName] = value
+  }
 }
 
 _.removeProp = function (instance, name) {

@@ -1,18 +1,18 @@
 const LevelsMixin = Mixin(superclass => class LevelsMixin extends superclass {
 
-  get levels () { return this._levels }
-  get level () { return this._level }
-
-  get fovs () { return this._fovs }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._fovs = undefined
 
     this._levels = undefined
     this._level = -1
   }
+
+  get levels () { return this._levels }
+  get level () { return this._level }
+
+  get fovs () { return this._fovs }
 
   hasLevel (level) {
     return level >= 0 && level < this._depth

@@ -7,7 +7,9 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   constructor () {
     super()
 
-    this.reset()
+    this._queue = []
+    this._last = 0
+    this._current = undefined
   }
 
   get queue () { return this._queue }
@@ -17,20 +19,9 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   get currentElapsed () { return performance.now() - _.get(this, '_current.last', 0) }
   get currentRemaining () { return this.currentDuration - this.currentElapsed }
 
-  reset () {
-    _.resetProps(this)
-
-    this._queue = []
-    this._last = 0
-    this._current = undefined
-
-    this.emit('reset')
-  }
-
   start () {
     if (this.isStopped) {
       super.start()
-      this.reset()
     }
   }
 
@@ -76,7 +67,9 @@ class Scheduler extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   destroy () {
     this.stop()
-    this.reset()
+
+    this._queue = []
+    this._current = undefined
   }
 
 }

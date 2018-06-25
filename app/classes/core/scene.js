@@ -4,16 +4,6 @@ const { ActMixin } = require('../../mixins/core/act')
 
 class Scene extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
-  constructor () {
-    super()
-
-    this.reset()
-  }
-
-  reset () {
-    _.resetProps(this)
-  }
-
   start () {
     this._container = new PIXI.Container()
     ACK.video.stage.addChildAt(this._container, 0)

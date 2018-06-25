@@ -1,12 +1,12 @@
 const ItemsMixin = Mixin(superclass => class ItemsMixin extends superclass {
 
-  get items () { return this._items }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._items = []
   }
+
+  get items () { return this._items }
 
   itemsAt (x, y, z) {
     return _.filter(this._items, i => i.x === x && i.y === y && i.z === z)

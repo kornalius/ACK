@@ -65,6 +65,10 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
   }
 
   destroy () {
+    if (super.destroy) {
+      super.destroy()
+    }
+
     this.destroySprite()
   }
 

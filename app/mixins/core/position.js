@@ -1,9 +1,12 @@
 const PositionMixin = Mixin(superclass => class PositionMixin extends superclass {
 
   constructor (x, y, z, map) {
-    super()
+    super(...arguments)
 
-    this.reset()
+    this._x = 0
+    this._y = 0
+    this._z = 0
+    this._map = undefined
 
     this.moveTo(x, y, z, map, false)
   }
@@ -42,17 +45,6 @@ const PositionMixin = Mixin(superclass => class PositionMixin extends superclass
       this._map = value
       this.emit('map-change', { value, old })
     }
-  }
-
-  reset () {
-    _.resetProps(this)
-
-    this.destroySprite()
-
-    this._x = 0
-    this._y = 0
-    this._z = 0
-    this._map = undefined
   }
 
   placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {

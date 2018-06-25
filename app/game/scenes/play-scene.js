@@ -1,5 +1,5 @@
 const { Scene } = require('../../classes/core/scene')
-const { MAP_WIDTH, MAP_HEIGHT, MAP_DEPTH } = require('../../constants')
+const { MAP_WIDTH, MAP_HEIGHT, MAP_DEPTH, VIDEO_HEIGHT } = require('../../constants')
 const { Map } = require('../../classes/core/map')
 
 let PlayScene = class PlayScene extends Scene {
@@ -8,6 +8,8 @@ let PlayScene = class PlayScene extends Scene {
     super()
 
     this._maps = []
+    this._map = undefined
+    this._mouseLocation = undefined
   }
 
   get map () { return this._map }
@@ -34,6 +36,12 @@ let PlayScene = class PlayScene extends Scene {
     this._map.start()
 
     this.addToPlayContainer(this._map.container)
+
+    if (ACK.DEVMODE) {
+      this._mouseLocation = ACK.text()
+      this._mouseLocation.sprite.position.set(0, VIDEO_HEIGHT - 10)
+      ACK.video.stage.addChild(this._mouseLocation.sprite)
+    }
   }
 
   stop () {
@@ -41,6 +49,16 @@ let PlayScene = class PlayScene extends Scene {
 
     this._map.stop()
     this.removeFromScene(this._uiContainer)
+
+    this._mouseLocation = undefined
+  }
+
+  destroy () {
+    for (let m of this._maps) {
+      m.destroy()
+    }
+    this._maps = []
+    this._map = undefined
   }
 
   load (cb) {
@@ -75,6 +93,40 @@ let PlayScene = class PlayScene extends Scene {
     ACK.update()
   }
 
+  updateDevInfo (options) {
+    let info = []
+
+    const infoObject = (name, o) => {
+      let s = ''
+      if (o.blocked) {
+        s += 'B'
+      }
+      else if (o.sightBlocked) {
+        s += 'S'
+      }
+      else if (o.lightBlocked) {
+        s += 'L'
+      }
+      info.push('[' + name + o.type + s + ']')
+    }
+
+    let at = this._map.at(options.x, options.y, this._map.level)
+    if (at.tile) {
+      infoObject('t', at.tile)
+    }
+    if (!_.isEmpty(at.items)) {
+      for (let i of at.items) {
+        infoObject('i', i)
+      }
+    }
+    if (!_.isEmpty(at.npcs)) {
+      for (let i of at.npcs) {
+        infoObject('n', i)
+      }
+    }
+
+    this._mouseLocation.text = 'x: ' + options.x + ' y: ' + options.y + ' ' + info.join('')
+  }
 }
 
 module.exports = {

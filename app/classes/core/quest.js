@@ -12,8 +12,6 @@ class Quest extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     _.addProp(this, 'duration', 0)
     _.addProp(this, 'status', 0)
     _.addProp(this, 'steps', [], true)
-
-    this.reset()
   }
 
   get isCompleted () {
@@ -26,10 +24,6 @@ class Quest extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   }
 
   get isFailed () { return this._status === FAILED }
-
-  reset () {
-    _.resetProps(this)
-  }
 
   get progress () {
     let c = 0
@@ -73,16 +67,10 @@ let QuestStep = class QuestStep extends mix(Object).with(EventsManager, StateMix
     _.addProp(this, 'duration', 0)
     _.addProp(this, 'status', 0)
     _.addProp(this, 'optional', false)
-
-    this.reset()
   }
 
   get isCompleted () { return this.progress === 100 }
   get isFailed () { return this._status === FAILED }
-
-  reset () {
-    _.resetProps(this)
-  }
 
   get progress () {
     return 0

@@ -19,7 +19,13 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
   constructor (width, height, depth = 1) {
     super()
 
-    this.reset()
+    this._needsRender = false
+
+    this._width = 0
+    this._height = 0
+    this._depth = 0
+
+    this._explored = []
 
     this._width = width
     this._height = height
@@ -38,51 +44,40 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
 
   get bounds () { return new PIXI.Rectangle(0, 0, this._width * TILE_WIDTH, this._height * TILE_HEIGHT) }
 
-  reset () {
-    _.resetProps(this)
-
-    super.reset()
-
-    this._needsRender = false
-
-    this._width = 0
-    this._height = 0
-    this._depth = 0
-
-    this._explored = []
-  }
-
   start () {
     this._container = new PIXI.Container()
 
     this._container.interactive = true
 
-    this._container.on('mousemove', e => {
-      this.unselectTiles()
-      if (!ACK.pauseInput) {
-        let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
-        let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
-        let tx = Math.floor(x / TILE_HEIGHT)
-        let ty = Math.floor(y / TILE_WIDTH)
-        let t = this.tileAt(tx, ty, this._level)
-        if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-          this.selectTileAt(tx, ty)
+    if (ACK.DEVMODE) {
+      this._container.on('mousemove', e => {
+        this.unselectTiles()
+        if (!ACK.pauseInput && e.target) {
+          let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+          let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+          let tx = Math.floor(x / TILE_HEIGHT)
+          let ty = Math.floor(y / TILE_WIDTH)
+          let t = this.tileAt(tx, ty, this._level)
+          // if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
+          if (t && t._type === TILE_FLOOR) {
+            this.selectTileAt(tx, ty)
+          }
         }
-      }
-    })
+      })
 
-    this._container.on('mousedown', e => {
-      if (!ACK.pauseInput) {
-        let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
-        let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
-        let tx = Math.floor(x / TILE_HEIGHT)
-        let ty = Math.floor(y / TILE_WIDTH)
-        let t = this.tileAt(tx, ty, this._level)
-        if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-          this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
-        }
-      }
-    })
+      // this._container.on('mousedown', e => {
+      //   if (!ACK.pauseInput && e.target) {
+      //     let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+      //     let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+      //     let tx = Math.floor(x / TILE_HEIGHT)
+      //     let ty = Math.floor(y / TILE_WIDTH)
+      //     let t = this.tileAt(tx, ty, this._level)
+      //     if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
+      //       this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
+      //     }
+      //   }
+      // })
+    }
 
     super.start()
   }
@@ -95,8 +90,6 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
     }
 
     super.stop()
-
-    this.reset()
   }
 
   isFloorAt (x, y, z) {
@@ -107,17 +100,19 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
     return this.isFloorAt(x, y, z) && _.isEmpty(this.itemsAt(x, y, z)) && _.isEmpty(this.npcsAt(x, y, z))
   }
 
-  randomFloorPosition (z, bounds) {
+  randomFloorPosition (z, bounds, iter) {
     if (!bounds) {
       bounds = new PIXI.Rectangle(0, 0, this._width, this._height)
     }
+    let tries = 0
     let x = _.random(bounds.left, bounds.right)
     let y = _.random(bounds.top, bounds.bottom)
-    while (!this.isEmptyFloorAt(x, y, z)) {
+    while (!this.isEmptyFloorAt(x, y, z) && (!iter || iter.call(this, x, y, z)) && tries < 1000) {
       x = _.random(bounds.left, bounds.right)
       y = _.random(bounds.top, bounds.bottom)
+      tries++
     }
-    return { x, y }
+    return tries >= 1000 ? undefined : { x, y }
   }
 
   setExplored (x, y, z, state) {
@@ -277,6 +272,15 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
         ease: 'quadratic-out',
         start: '',
         end: 'HELLO WORLD!',
+      }),
+      ACK.spriteAction({
+        instance: t,
+        auto: true,
+        delay: 3000,
+        duration: 2500,
+        ease: 'quadratic',
+        start: { red: 1, blue: 1, green: 1 },
+        end: { red: 1, blue: 0, green: 0.75 },
       }),
       ACK.destroyAction({
         instance: t,

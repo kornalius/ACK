@@ -8,16 +8,10 @@ class Effect extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     super()
 
     _.addProp(this, 'duration', 0)
-
-    this.reset()
   }
 
   get modifiers () {
     return {}
-  }
-
-  reset () {
-    _.resetProps(this)
   }
 
   act (t, delta) {

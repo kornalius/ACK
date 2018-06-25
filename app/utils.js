@@ -32,6 +32,9 @@ window._ = _
 _.extend(_, require('lodash'))
 _.extend(_, require('underscore-deep-extend'))
 
+const Color = require('color')
+window.Color = Color
+
 _.isNodeList = function (el) {
   return /^\[object (HTMLCollection|NodeList)\]$/.test(Object.prototype.toString.call(el))
 }
@@ -894,6 +897,7 @@ module.exports = {
   keyToKeycode,
   isUUID,
   $,
+  Color,
   debounce,
   throttle,
   isEvent,

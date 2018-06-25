@@ -15,6 +15,7 @@
     "ACK": false,
     "PIXI": false,
     "TWEEN": false,
+    "Color": false,
     "key": false,
     "is": false,
     "_": false,

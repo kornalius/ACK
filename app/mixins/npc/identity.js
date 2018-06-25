@@ -2,10 +2,8 @@ const faker = require('faker')
 
 const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass {
 
-  get hasIdentity () { return true }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._firstName = undefined
     this._lastName = undefined
@@ -29,6 +27,8 @@ const IdentityMixin = Mixin(superclass => class IdentityMixin extends superclass
     this._intelligence = undefined
     this._traits = undefined
   }
+
+  get hasIdentity () { return true }
 
   get sex () {
     if (!this._sex) {

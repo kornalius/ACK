@@ -2,11 +2,13 @@ const { TILE_WIDTH, TILE_HEIGHT } = require('../../constants')
 
 const TilesMixin = Mixin(superclass => class TilesMixin extends superclass {
 
-  get tiles () { return this._tiles }
+  constructor () {
+    super(...arguments)
 
-  reset () {
     this._tiles = []
   }
+
+  get tiles () { return this._tiles }
 
   tileAt (x, y, z) {
     return _.find(this._tiles, { x, y, z })
@@ -37,6 +39,7 @@ const TilesMixin = Mixin(superclass => class TilesMixin extends superclass {
       s = new PIXI.Sprite(PIXI.Texture.fromFrame('select.png'))
       this._tileSelector = s
     }
+
     let c = this.levelContainer()
     if (s.parent !== c) {
       if (s.parent) {
@@ -45,6 +48,8 @@ const TilesMixin = Mixin(superclass => class TilesMixin extends superclass {
       c.addChild(s)
     }
     s.position.set(x * TILE_WIDTH, y * TILE_HEIGHT)
+
+    ACK.scene.updateDevInfo({ x, y })
   }
 
   unselectTiles () {

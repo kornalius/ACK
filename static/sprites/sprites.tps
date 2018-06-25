@@ -112,7 +112,7 @@
             <key>maxRects</key>
             <struct type="AlgorithmMaxRectsSettings">
                 <key>heuristic</key>
-                <enum type="AlgorithmMaxRectsSettings::Heuristic">Best</enum>
+                <enum type="AlgorithmMaxRectsSettings::Heuristic">AreaFit</enum>
             </struct>
             <key>basic</key>
             <struct type="AlgorithmBasicSettings">
@@ -199,19 +199,30 @@
             </struct>
             <key type="filename">blue-door-opened.png</key>
             <key type="filename">blue-key.png</key>
+            <key type="filename">computer.png</key>
+            <key type="filename">disk.png</key>
             <key type="filename">door-closed.png</key>
             <key type="filename">door-opened.png</key>
             <key type="filename">floor.png</key>
+            <key type="filename">fridge.png</key>
             <key type="filename">green-door-opened.png</key>
             <key type="filename">green-key.png</key>
+            <key type="filename">pill.png</key>
             <key type="filename">player-1.png</key>
             <key type="filename">player-2.png</key>
             <key type="filename">red-door-opened.png</key>
             <key type="filename">red-key.png</key>
+            <key type="filename">rubble.png</key>
             <key type="filename">select.png</key>
+            <key type="filename">sink.png</key>
             <key type="filename">stairs-down.png</key>
             <key type="filename">stairs-up.png</key>
-            <key type="filename">wall.png</key>
+            <key type="filename">stove.png</key>
+            <key type="filename">tv.png</key>
+            <key type="filename">wall-down.png</key>
+            <key type="filename">wall-left.png</key>
+            <key type="filename">wall-right.png</key>
+            <key type="filename">wall-up.png</key>
             <key type="filename">yellow-door-opened.png</key>
             <key type="filename">yellow-key.png</key>
             <struct type="IndividualSpriteSettings">
@@ -289,7 +300,6 @@
             <filename>yellow-key.png</filename>
             <filename>red-key.png</filename>
             <filename>blue-key.png</filename>
-            <filename>wall.png</filename>
             <filename>floor.png</filename>
             <filename>select.png</filename>
             <filename>player-1.png</filename>
@@ -306,6 +316,18 @@
             <filename>yellow-door-opened.png</filename>
             <filename>door-opened.png</filename>
             <filename>door-closed.png</filename>
+            <filename>rubble.png</filename>
+            <filename>computer.png</filename>
+            <filename>pill.png</filename>
+            <filename>wall-up.png</filename>
+            <filename>wall-down.png</filename>
+            <filename>wall-left.png</filename>
+            <filename>wall-right.png</filename>
+            <filename>disk.png</filename>
+            <filename>stove.png</filename>
+            <filename>fridge.png</filename>
+            <filename>tv.png</filename>
+            <filename>sink.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

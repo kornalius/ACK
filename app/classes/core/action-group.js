@@ -7,8 +7,7 @@ class ActionGroup extends mix(Object).with(EventsManager, StateMixin) {
   constructor (actions = [], options = {}) {
     super()
 
-    this.reset()
-
+    this._queue = []
     this._options = options
 
     for (let a of actions) {
@@ -46,10 +45,6 @@ class ActionGroup extends mix(Object).with(EventsManager, StateMixin) {
       }
     }
     return t
-  }
-
-  reset () {
-    this._queue = []
   }
 
   inQueue (action) {

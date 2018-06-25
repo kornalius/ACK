@@ -24,6 +24,8 @@ const { ObjectAction } = require('../actions/object-action')
 const { TextAction } = require('../actions/text-action')
 const { DestroyAction } = require('../actions/destroy-action')
 
+const { Text } = require('../ui/text')
+
 class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   constructor () {
@@ -41,13 +43,16 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
     this._words = new Words()
 
-    this.reset()
-
+    this._ticks = []
     this._tickBound = this.tick.bind(this)
     PIXI.ticker.shared.add(this._tickBound)
 
+    this._pauseInput = false
+
     this.load(this.start)
   }
+
+  get DEVMODE () { return true }
 
   get DIRS () { return utils.dirs }
   get app () { return utils.app }
@@ -100,30 +105,8 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     return getFont(name)
   }
 
-  reset () {
-    _.resetProps(this)
-
-    this._ticks = []
-
-    if (this._player) {
-      this._player.reset()
-    }
-
-    this._pauseInput = false
-
-    this._scheduler.reset()
-    this._video.reset()
-    this._cursor.reset()
-
-    if (this._scene) {
-      this._scene.reset()
-    }
-  }
-
   start () {
     if (this.isStopped) {
-      this.reset()
-
       this._actionManager.start()
 
       this.actSpeed = 100
@@ -150,14 +133,38 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   destroy () {
     this.stop()
 
-    this._player.destroy()
-    this._scheduler.destroy()
-    this._video.destroy()
-    this._cursor.destroy()
+    if (this._player) {
+      this._player.destroy()
+      this._player = undefined
+    }
+
+    if (this._scheduler) {
+      this._scheduler.destroy()
+      this._scheduler = undefined
+    }
+
+    if (this._video) {
+      this._video.destroy()
+      this._video = undefined
+    }
+
+    if (this._cursor) {
+      this._cursor.destroy()
+      this._cursor = undefined
+    }
 
     if (this._scene) {
       this._scene.destroy()
+      this._scene = undefined
     }
+
+    if (this._words) {
+      this._words.destroy()
+      this._words = undefined
+    }
+
+    this._ticks = []
+    this._tickBound = undefined
   }
 
   addTick (obj) {
@@ -272,6 +279,10 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
   destroyAction (options) {
     return new DestroyAction(options)
+  }
+
+  text (text, font, color) {
+    return new Text(text, font, color)
   }
 
 }

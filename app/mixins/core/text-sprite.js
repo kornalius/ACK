@@ -13,7 +13,7 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
     this.destroySprite()
   }
 
-  drawText (text, font, color = 0xffffffff) {
+  drawText (text, font) {
     let cw = font.width
     let ch = font.height
     let fnt_sz = font.char_size
@@ -44,7 +44,7 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
       for (let by = 0; by < ch; by++) {
         let pi = (py + by) * width + px
         for (let bx = 0; bx < cw; bx++) {
-          pixels[pi++] = fnt_mem[ptr++] ? color : 0
+          pixels[pi++] = fnt_mem[ptr++] ? 0xffffffff : 0
         }
       }
     }
@@ -65,10 +65,10 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
     return tex
   }
 
-  updateSprite (text, font, color = 0xffffffff) {
+  updateSprite (text, font) {
     let sprite = this._sprite
 
-    let tex = this.drawText(text, font, color)
+    let tex = this.drawText(text, font)
 
     if (sprite) {
       sprite.texture = tex
@@ -80,8 +80,8 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
     return sprite
   }
 
-  createSprite (text, font, color = 0xffffffff) {
-    let sprite = this.updateSprite(text, font, color)
+  createSprite (text, font) {
+    let sprite = this.updateSprite(text, font)
     sprite._parent = this
     this._sprite = sprite
     return sprite
@@ -98,6 +98,10 @@ const TextSpriteMixin = Mixin(superclass => class TextSpriteMixin extends superc
   }
 
   destroy () {
+    if (super.destroy) {
+      super.destroy()
+    }
+
     this.destroySprite()
   }
 

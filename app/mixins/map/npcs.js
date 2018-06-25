@@ -1,12 +1,12 @@
 const NpcsMixin = Mixin(superclass => class NpcsMixin extends superclass {
 
-  get npcs () { return this._npcs }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._npcs = []
   }
+
+  get npcs () { return this._npcs }
 
   npcsAt (x, y, z) {
     return _.filter(this._npcs, n => n.x === x && n.y === y && n.z === z)

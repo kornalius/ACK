@@ -3,15 +3,15 @@ faker.locale = 'en'
 
 const JobMixin = Mixin(superclass => class JobMixin extends superclass {
 
-  get hasJob () { return true }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._jobArea = undefined
     this._jobType = undefined
     this._jobTitle = undefined
   }
+
+  get hasJob () { return true }
 
   get jobArea () {
     if (!this._jobArea) {

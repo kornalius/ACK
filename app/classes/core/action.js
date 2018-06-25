@@ -6,9 +6,8 @@ class Action extends mix(Object).with(EventsManager, StateMixin) {
   constructor (options = {}) {
     super()
 
-    this.reset()
-
     this._options = options
+    this._tween = undefined
   }
 
   get options () { return this._options }
@@ -64,11 +63,6 @@ class Action extends mix(Object).with(EventsManager, StateMixin) {
   get repeat () { return _.get(this._options, 'repeat', 0) }
   get reverse () { return _.get(this._options, 'reverse', false) }
 
-  reset () {
-    this._options = {}
-    this._tween = undefined
-  }
-
   _buildTween () {
     let data = _.clone(this.startData)
     let end = _.clone(this.endData)
@@ -109,7 +103,6 @@ class Action extends mix(Object).with(EventsManager, StateMixin) {
   stop () {
     if (super.stop()) {
       if (this._tween) {
-        this._tween.stop()
         this._tween = undefined
       }
 

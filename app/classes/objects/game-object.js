@@ -14,14 +14,16 @@ class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMi
   constructor (x, y, z, map) {
     super()
 
-    this.reset()
-
     this.createSprite(this.spriteFrame)
     if (this._sprite) {
       this._sprite.alpha = 0
     }
 
     this.moveTo(x, y, z, map, false)
+
+    if (this.enabled) {
+      this.start()
+    }
   }
 
   get animateMove () { return false }
@@ -35,20 +37,6 @@ class GameObject extends mix(Object).with(EventsManager, PositionMixin, EnableMi
   get sightBlocked () { return false }
 
   get lightBlocked () { return false }
-
-  reset () {
-    super.reset()
-
-    _.resetProps(this)
-
-    if (this.enabled) {
-      this.start()
-    }
-  }
-
-  destroy () {
-    super.destroySprite()
-  }
 
   act (t, delta) {
     if (this.isRunning) {

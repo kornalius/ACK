@@ -10,25 +10,17 @@ const GeneratorsMixin = Mixin(superclass => class GeneratorsMixin extends superc
 
   _generateStairs () {
     for (let z = 0; z < this._depth - 1; z++) {
-      let x = _.random(this._width)
-      let y = _.random(this._height)
-      let tries = 0
-
-      while ((this.blockedAt(x, y, z) || this.blockedAt(x, y, z + 1)) && tries < 1000) {
-        x = _.random(this._width)
-        y = _.random(this._height)
-        tries++
-      }
-
-      if (tries < 1000) {
-        this.addItemAt(new StairsUp(), x, y, z)
-        this.addItemAt(new StairsDown(), x, y, z + 1)
+      let idx = this.randomRoom(z)
+      let pos = this.randomPositionInRoom(idx, z, (x, y, z) => this.blockedAt(x, y, z) && this.blockedAt(x, y, z + 1))
+      if (pos) {
+        this.addItemAt(new StairsUp(), pos.x, pos.y, z)
+        this.addItemAt(new StairsDown(), pos.x, pos.y, z + 1)
       }
     }
   }
 
   _generateDoors (dungeon, z) {
-    const doors = [Door, Door, Door, Door, Door, RedDoor, BlueDoor, GreenDoor, YellowDoor]
+    const doors = [Door, Door, Door, Door, Door, Door, RedDoor, Door, Door, Door, BlueDoor, Door, Door, Door, GreenDoor, Door, Door, Door, YellowDoor]
     const keys = {
       Door: undefined,
       RedDoor: RedKey,
@@ -38,12 +30,21 @@ const GeneratorsMixin = Mixin(superclass => class GeneratorsMixin extends superc
     }
     for (let room of this._rooms[z]) {
       room.getDoors((x, y) => {
-        let DoorClass = _.sample(doors)
-        this.addItemAt(new DoorClass(), x, y, z)
+        let hasDoor = false
+        for (let i of this.itemsAt(x, y, z)) {
+          if (i.isDoor) {
+            hasDoor = true
+            break
+          }
+        }
+        if (!hasDoor) {
+          let DoorClass = _.sample(doors)
+          this.addItemAt(new DoorClass(), x, y, z)
 
-        let KeyClass = keys[DoorClass]
-        if (KeyClass) {
-          this.addItemAtRandomPosition(new KeyClass(), z)
+          let KeyClass = keys[DoorClass]
+          if (KeyClass) {
+            this.addItemAtRandomPosition(new KeyClass(), z)
+          }
         }
       })
     }

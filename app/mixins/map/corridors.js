@@ -1,12 +1,12 @@
 const CorridorsMixin = Mixin(superclass => class CorridorsMixin extends superclass {
 
-  get corridors () { return this._corridors }
-
-  reset () {
-    super.reset()
+  constructor () {
+    super(...arguments)
 
     this._corridors = undefined
   }
+
+  get corridors () { return this._corridors }
 
   corridorBounds (idx, z) {
     let c = _.isNumber(idx) ? this._corridors[z][idx] : idx
