@@ -72,7 +72,7 @@ const SightMixin = Mixin(superclass => class SightMixin extends superclass {
       this._map.setExplored(x, y, z, true)
 
       let alpha = 0
-      if (this._map.isFloorAt(x, y, z)) {
+      if (this._map.isFloorAt(x, y, z) || this._map.isWallAt(x, y, z)) {
         alpha = Math.max(0.2, 1 - (pt.distance(new PIXI.Point(x, y)) / s))
       }
 

@@ -49,6 +49,17 @@ const RoomsMixin = Mixin(superclass => class RoomsMixin extends superclass {
     return player.z === z && r.contains(player.x, player.y)
   }
 
+  hasDoor (x, y, z) {
+    let hasDoor = false
+    for (let i of this.itemsAt(x, y, z)) {
+      if (i.isDoor) {
+        hasDoor = true
+        break
+      }
+    }
+    return hasDoor
+  }
+
 })
 
 module.exports = {

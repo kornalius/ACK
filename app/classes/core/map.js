@@ -8,13 +8,16 @@ const { SpritesMixin } = require('../../mixins/map/sprites')
 const { LevelsMixin } = require('../../mixins/map/levels')
 const { RoomsMixin } = require('../../mixins/map/rooms')
 const { CorridorsMixin } = require('../../mixins/map/corridors')
-const { GeneratorsMixin } = require('../../mixins/map/generators')
+const { LevelsGeneratorMixin } = require('../../mixins/map/generators/levels')
+const { DoorsGeneratorMixin } = require('../../mixins/map/generators/doors')
+const { WallsGeneratorMixin } = require('../../mixins/map/generators/walls')
+const { StairsGeneratorMixin } = require('../../mixins/map/generators/stairs')
 
 const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_FLOOR } = require('../../constants')
 
 const { TextObject } = require('../objects/text-object')
 
-class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, GeneratorsMixin) {
+class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, LevelsGeneratorMixin, DoorsGeneratorMixin, WallsGeneratorMixin, StairsGeneratorMixin) {
 
   constructor (width, height, depth = 1) {
     super()
@@ -59,24 +62,30 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
           let ty = Math.floor(y / TILE_WIDTH)
           let t = this.tileAt(tx, ty, this._level)
           // if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-          if (t && t._type === TILE_FLOOR) {
+          if (t) {
             this.selectTileAt(tx, ty)
           }
         }
       })
 
-      // this._container.on('mousedown', e => {
-      //   if (!ACK.pauseInput && e.target) {
-      //     let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
-      //     let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
-      //     let tx = Math.floor(x / TILE_HEIGHT)
-      //     let ty = Math.floor(y / TILE_WIDTH)
-      //     let t = this.tileAt(tx, ty, this._level)
-      //     if (t && t._type === TILE_FLOOR && this.isExplored(tx, ty, this._level) && t._sprite.alpha !== 0) {
-      //       this.centerOn(tx * TILE_WIDTH, ty * TILE_HEIGHT)
-      //     }
-      //   }
-      // })
+      this._container.on('mousedown', e => {
+        if (!ACK.pauseInput && e.target) {
+          let x = e.data.global.x / VIDEO_SCALE - _.get(e, 'target.position.x', 0)
+          let y = e.data.global.y / VIDEO_SCALE - _.get(e, 'target.position.y', 0)
+          let tx = Math.floor(x / TILE_HEIGHT)
+          let ty = Math.floor(y / TILE_WIDTH)
+          let at = this.at(tx, ty, this._level)
+          if (at) {
+            console.info('\n-----------------------')
+            console.info('x:', tx, 'y:', ty, 'z:', this._level)
+            console.info(at.tile)
+            console.info(at.items)
+            console.info(at.npcs)
+            console.info(at.player)
+            console.info('-----------------------\n')
+          }
+        }
+      })
     }
 
     super.start()
@@ -94,6 +103,10 @@ class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMix
 
   isFloorAt (x, y, z) {
     return _.get(this.tileAt(x, y, z), 'type') === TILE_FLOOR
+  }
+
+  isWallAt (x, y, z) {
+    return _.get(this.tileAt(x, y, z), 'isWall', false)
   }
 
   isEmptyFloorAt (x, y, z) {

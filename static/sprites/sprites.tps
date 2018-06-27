@@ -219,9 +219,18 @@
             <key type="filename">stairs-up.png</key>
             <key type="filename">stove.png</key>
             <key type="filename">tv.png</key>
+            <key type="filename">wall-corner-down-left.png</key>
+            <key type="filename">wall-corner-down-right.png</key>
+            <key type="filename">wall-corner-up-left.png</key>
+            <key type="filename">wall-corner-up-right.png</key>
+            <key type="filename">wall-down-left.png</key>
+            <key type="filename">wall-down-right.png</key>
             <key type="filename">wall-down.png</key>
+            <key type="filename">wall-left-right.png</key>
             <key type="filename">wall-left.png</key>
             <key type="filename">wall-right.png</key>
+            <key type="filename">wall-up-left.png</key>
+            <key type="filename">wall-up-right.png</key>
             <key type="filename">wall-up.png</key>
             <key type="filename">yellow-door-opened.png</key>
             <key type="filename">yellow-key.png</key>
@@ -328,6 +337,15 @@
             <filename>fridge.png</filename>
             <filename>tv.png</filename>
             <filename>sink.png</filename>
+            <filename>wall-down-right.png</filename>
+            <filename>wall-down-left.png</filename>
+            <filename>wall-up-right.png</filename>
+            <filename>wall-up-left.png</filename>
+            <filename>wall-corner-up-left.png</filename>
+            <filename>wall-corner-up-right.png</filename>
+            <filename>wall-corner-down-left.png</filename>
+            <filename>wall-corner-down-right.png</filename>
+            <filename>wall-left-right.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

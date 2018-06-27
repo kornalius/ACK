@@ -1,6 +1,6 @@
 const { GameObject } = require('./game-object')
 
-const { TILE_FLOOR, TILE_WALL } = require('../../constants')
+const { TILE_FLOOR, TILE_WALL, TILE_WALL_UP, TILE_WALL_DOWN, TILE_WALL_LEFT, TILE_WALL_RIGHT, TILE_WALL_DOWN_LEFT, TILE_WALL_DOWN_RIGHT, TILE_WALL_UP_LEFT, TILE_WALL_UP_RIGHT, TILE_WALL_CORNER_UP_LEFT, TILE_WALL_CORNER_UP_RIGHT, TILE_WALL_CORNER_DOWN_LEFT, TILE_WALL_CORNER_DOWN_RIGHT, TILE_WALL_LEFT_RIGHT } = require('../../constants')
 
 class TileObject extends GameObject {
 
@@ -29,14 +29,30 @@ class TileObject extends GameObject {
   get spriteFrame () {
     switch (this._type) {
       case TILE_FLOOR: { return 'floor.png' }
-      // case TILE_WALL: { return 'wall.png' }
+      case TILE_WALL_UP: { return 'wall-up.png' }
+      case TILE_WALL_DOWN: { return 'wall-down.png' }
+      case TILE_WALL_LEFT: { return 'wall-left.png' }
+      case TILE_WALL_RIGHT: { return 'wall-right.png' }
+      case TILE_WALL_DOWN_LEFT: { return 'wall-down-left.png' }
+      case TILE_WALL_DOWN_RIGHT: { return 'wall-down-right.png' }
+      case TILE_WALL_UP_LEFT: { return 'wall-up-left.png' }
+      case TILE_WALL_UP_RIGHT: { return 'wall-up-right.png' }
+      case TILE_WALL_CORNER_UP_LEFT: { return 'wall-corner-up-left.png' }
+      case TILE_WALL_CORNER_UP_RIGHT: { return 'wall-corner-up-right.png' }
+      case TILE_WALL_CORNER_DOWN_LEFT: { return 'wall-corner-down-left.png' }
+      case TILE_WALL_CORNER_DOWN_RIGHT: { return 'wall-corner-down-right.png' }
+      case TILE_WALL_LEFT_RIGHT: { return 'wall-left-right.png' }
     }
     return undefined
   }
 
-  get blocked () { return this._type === TILE_WALL }
+  get isWall () {
+    return _.includes([TILE_WALL, TILE_WALL_UP, TILE_WALL_DOWN, TILE_WALL_LEFT, TILE_WALL_RIGHT, TILE_WALL_DOWN_LEFT, TILE_WALL_DOWN_RIGHT, TILE_WALL_UP_LEFT, TILE_WALL_UP_RIGHT, TILE_WALL_CORNER_UP_LEFT, TILE_WALL_CORNER_UP_RIGHT, TILE_WALL_CORNER_DOWN_LEFT, TILE_WALL_CORNER_DOWN_RIGHT, TILE_WALL_LEFT_RIGHT], this._type)
+  }
 
-  get sightBlocked () { return this._type === TILE_WALL }
+  get blocked () { return this.isWall }
+
+  get sightBlocked () { return this.isWall }
 
   get lightBlocked () { return this._type === TILE_WALL }
 

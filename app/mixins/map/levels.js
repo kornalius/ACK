@@ -41,7 +41,7 @@ const LevelsMixin = Mixin(superclass => class LevelsMixin extends superclass {
     for (let level = 0; level < this._depth; level++) {
       this._levels[level] = new PIXI.Container()
     }
-    this._generateLevels()
+    this.generateLevels()
   }
 
   _destroyLevels () {

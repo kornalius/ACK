@@ -1,9 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES6"
+    "target": "ES6",
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "node_modules",
     "**/node_modules/*"
-  ]
+  ],
+  "typeAcquisition": {
+    "include": [
+      "lodash",
+      "pixi.js",
+      "color",
+      "faker",
+      "rot-js",
+      "tween.js"
+    ]
+  }
 }
