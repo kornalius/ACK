@@ -90,62 +90,42 @@ const WallsGeneratorMixin = Mixin(superclass => class WallsGeneratorMixin extend
   }
 
   adjustCorners (z) {
-    for (let t of this._tiles) {
-      if (t.z === z && t.isWall) {
-        let x = t.x
-        let y = t.y
-        let type = t.type
+    // from top to bottom
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        let t = this.tileAt(x, y, z)
+        if (t && t.isWall) {
+          let type = t.type
 
-        let lt = this.tileAt(x - 1, y, z)
-        let rt = this.tileAt(x - 1, y, z)
-        let tt = this.tileAt(x, y - 1, z)
-        let bt = this.tileAt(x, y + 1, z)
+          let lt = _.get(this.tileAt(x - 1, y, z), 'type')
+          let rt = _.get(this.tileAt(x - 1, y, z), 'type')
+          let tt = _.get(this.tileAt(x, y - 1, z), 'type')
+          let bt = _.get(this.tileAt(x, y + 1, z), 'type')
 
-        if (type === TILE_WALL_LEFT && _.get(lt, 'type') === TILE_WALL_UP) {
-          t.type = TILE_WALL_UP
-        }
-        else if ((type === TILE_WALL_LEFT || type === TILE_WALL_RIGHT) && _.get(lt, 'type') === TILE_FLOOR && _.get(rt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_LEFT_RIGHT
-        }
-        else if (type === TILE_WALL_UP && _.get(lt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_UP_RIGHT
-        }
-        else if (type === TILE_WALL_UP && _.get(rt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_UP_LEFT
-        }
-        else if (type === TILE_WALL_DOWN && _.get(lt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_DOWN_RIGHT
-        }
-        else if (type === TILE_WALL_DOWN && _.get(rt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_DOWN_LEFT
-        }
-        else if (type === TILE_WALL_LEFT && _.get(lt, 'type') === TILE_WALL_UP && _.get(rt, 'type') === TILE_WALL_UP) {
-          t.type = TILE_WALL_UP
-        }
-        else if (type === TILE_WALL_LEFT && _.get(lt, 'type') === TILE_WALL_DOWN) {
-          t.type = TILE_WALL_CORNER_DOWN_LEFT
-        }
-        else if (type === TILE_WALL_RIGHT && _.get(rt, 'type') === TILE_WALL_UP) {
-          t.type = TILE_WALL_UP
-        }
-        else if (type === TILE_WALL_RIGHT && _.get(lt, 'type') === TILE_WALL_DOWN && _.get(rt, 'type') === TILE_WALL_DOWN) {
-          t.type = TILE_WALL_DOWN
-        }
-        else if (type === TILE_WALL_RIGHT && _.get(rt, 'type') === TILE_WALL_DOWN) {
-          t.type = TILE_WALL_CORNER_DOWN_RIGHT
-        }
-        else if (type === TILE_WALL_DOWN && _.get(bt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_UP
-        }
-        else if (type === TILE_WALL_DOWN && _.get(rt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_DOWN_LEFT
-        }
-        else if (type === TILE_WALL_DOWN && _.get(lt, 'type') === TILE_FLOOR) {
-          t.type = TILE_WALL_CORNER_DOWN_RIGHT
+          // fLf | fRf
+          if (lt === TILE_FLOOR && (type === TILE_WALL_LEFT || type === TILE_WALL_RIGHT) && rt === TILE_FLOOR) {
+            t.type = TILE_WALL_LEFT_RIGHT
+          }
+
+          // Df
+          else if (type === TILE_WALL_DOWN && rt === TILE_FLOOR) {
+            t.type = TILE_WALL_DOWN_LEFT
+          }
+
+          // fD
+          else if (lt === TILE_FLOOR && type === TILE_WALL_DOWN) {
+            t.type = TILE_WALL_DOWN_RIGHT
+          }
+
+          // UL
+          else if (lt === TILE_FLOOR && type === TILE_WALL_DOWN) {
+            t.type = TILE_WALL_DOWN_RIGHT
+          }
         }
       }
     }
   }
+
 })
 
 module.exports = {
