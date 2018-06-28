@@ -10,14 +10,13 @@ const { RoomsMixin } = require('../../mixins/map/rooms')
 const { CorridorsMixin } = require('../../mixins/map/corridors')
 const { LevelsGeneratorMixin } = require('../../mixins/map/generators/levels')
 const { DoorsGeneratorMixin } = require('../../mixins/map/generators/doors')
-const { WallsGeneratorMixin } = require('../../mixins/map/generators/walls')
 const { StairsGeneratorMixin } = require('../../mixins/map/generators/stairs')
 
 const { VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_SCALE, TILE_WIDTH, TILE_HEIGHT, TILE_FLOOR } = require('../../constants')
 
 const { TextObject } = require('../objects/text-object')
 
-class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, LevelsGeneratorMixin, DoorsGeneratorMixin, WallsGeneratorMixin, StairsGeneratorMixin) {
+class Map extends mix(Object).with(EventsManager, StateMixin, ActMixin, TilesMixin, ItemsMixin, NpcsMixin, SpritesMixin, LevelsMixin, RoomsMixin, CorridorsMixin, LevelsGeneratorMixin, DoorsGeneratorMixin, StairsGeneratorMixin) {
 
   constructor (width, height, depth = 1) {
     super()

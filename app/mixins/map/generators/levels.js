@@ -10,13 +10,7 @@ const LevelsGeneratorMixin = Mixin(superclass => class LevelsGeneratorMixin exte
       dungeon.create((x, y, wall) => this._tiles.push(new TileObject(x, y, z, this, wall ? TILE_WALL : TILE_FLOOR)))
       this._rooms[z] = dungeon.getRooms()
       this._corridors[z] = dungeon.getCorridors()
-    }
-
-    for (let z = 0; z < this._depth; z++) {
       this.generateDoors(dungeon, z)
-      this.generateRoomWalls(z)
-      this.generateCorridorWalls(z)
-      this.adjustCorners(z)
     }
 
     this.generateStairs()
