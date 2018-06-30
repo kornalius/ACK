@@ -1,22 +1,22 @@
 const { Scene } = require('../../classes/core/scene')
-const { MAP_WIDTH, MAP_HEIGHT, MAP_DEPTH, VIDEO_HEIGHT } = require('../../constants')
-const { Map } = require('../../classes/core/map')
+const { Wakeup } = require('../../game/rooms/wakeup')
 
-let PlayScene = class PlayScene extends Scene {
+// const { Editor } = require('../../editor/editor')
+
+class PlayScene extends Scene {
 
   constructor () {
     super()
 
-    this._maps = []
-    this._map = undefined
-    this._mouseLocation = undefined
+    _.addProp(this, 'playContainer', undefined, true)
+    _.addProp(this, 'uiContainer', undefined, true)
+    _.addProp(this, 'rooms', [], true)
+    _.addProp(this, 'room', undefined, true)
+
+    // if (ACK.DEVMODE) {
+    //   _.addProp(this, 'editor', undefined, true)
+    // }
   }
-
-  get map () { return this._map }
-  get maps () { return this._maps }
-
-  get uiContainer () { return this._uiContainer }
-  get playContainer () { return this._playContainer }
 
   start () {
     super.start()
@@ -25,40 +25,48 @@ let PlayScene = class PlayScene extends Scene {
     this.addToScene(this._playContainer)
 
     this._uiContainer = this.newContainer([
-      this.newSprite('healthbar.png', 2, 2, 0),
-      this.newSprite('cpubar.png', 120, 2, 0),
-      this.newSprite('diskbar.png', 238, 2, 0),
+      // this.newSprite('healthbar.png', 2, 2, 0),
+      // this.newSprite('cpubar.png', 120, 2, 0),
+      // this.newSprite('diskbar.png', 238, 2, 0),
     ])
+    this._uiContainer.interactive = true
     this.addToScene(this._uiContainer)
 
-    this._map = new Map(_.random(16, MAP_WIDTH), _.random(16, MAP_HEIGHT), _.random(1, MAP_DEPTH + 1))
-    this._maps.push(this._map)
-    this._map.start()
+    this._room = new Wakeup(this)
+    this._rooms.push(this._room)
 
-    this.addToPlayContainer(this._map.container)
+    this._room.start()
+    this._room.enter()
 
-    if (ACK.DEVMODE) {
-      this._mouseLocation = ACK.text()
-      this._mouseLocation.sprite.position.set(0, VIDEO_HEIGHT - 10)
-      ACK.video.stage.addChild(this._mouseLocation.sprite)
-    }
+    // if (ACK.DEVMODE) {
+    //   this._editor = new Editor(this)
+    //   this._editor.start()
+    // }
   }
 
   stop () {
     super.stop()
 
-    this._map.stop()
+    if (this._room) {
+      this._room.exit()
+      this._room.stop()
+      this._room = undefined
+    }
+
     this.removeFromScene(this._uiContainer)
 
-    this._mouseLocation = undefined
+    // if (ACK.DEVMODE) {
+    //   this._editor.stop()
+    //   this._editor = undefined
+    // }
   }
 
   destroy () {
-    for (let m of this._maps) {
+    for (let m of this._rooms) {
       m.destroy()
     }
-    this._maps = []
-    this._map = undefined
+    this._rooms = []
+    this._room = undefined
   }
 
   load (cb) {
@@ -98,22 +106,11 @@ let PlayScene = class PlayScene extends Scene {
 
     const infoObject = (name, o) => {
       let s = ''
-      if (o.blocked) {
-        s += 'B'
-      }
-      else if (o.sightBlocked) {
-        s += 'S'
-      }
-      else if (o.lightBlocked) {
-        s += 'L'
-      }
+
       info.push('[' + name + o.type + s + ']')
     }
 
-    let at = this._map.at(options.x, options.y, this._map.level)
-    if (at.tile) {
-      infoObject('t', at.tile)
-    }
+    let at = this._room.at(options.x, options.y)
     if (!_.isEmpty(at.items)) {
       for (let i of at.items) {
         infoObject('i', i)
@@ -125,7 +122,7 @@ let PlayScene = class PlayScene extends Scene {
       }
     }
 
-    this._mouseLocation.text = 'x: ' + options.x + ' y: ' + options.y + ' ' + info.join('')
+    this._editor.mouseLocation.text = 'x: ' + options.x + ' y: ' + options.y + ' ' + info.join('')
   }
 }
 

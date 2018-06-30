@@ -181,68 +181,80 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">blue-door-closed.png</key>
-            <key type="filename">green-door-closed.png</key>
-            <key type="filename">red-door-closed.png</key>
-            <key type="filename">yellow-door-closed.png</key>
+            <key type="filename">blue-key.png</key>
+            <key type="filename">disk.png</key>
+            <key type="filename">green-key.png</key>
+            <key type="filename">pill.png</key>
+            <key type="filename">red-key.png</key>
+            <key type="filename">wall-note.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>4,5,8,9</rect>
+                <rect>4,4,8,8</rect>
                 <key>scale9Paddings</key>
-                <rect>4,5,8,9</rect>
+                <rect>4,4,8,8</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">blue-door-opened.png</key>
-            <key type="filename">blue-key.png</key>
-            <key type="filename">computer.png</key>
-            <key type="filename">disk.png</key>
-            <key type="filename">door-closed.png</key>
-            <key type="filename">door-opened.png</key>
-            <key type="filename">floor.png</key>
-            <key type="filename">green-door-opened.png</key>
-            <key type="filename">green-key.png</key>
-            <key type="filename">pill.png</key>
-            <key type="filename">player-1.png</key>
-            <key type="filename">player-2.png</key>
-            <key type="filename">red-door-opened.png</key>
-            <key type="filename">red-key.png</key>
-            <key type="filename">rubble.png</key>
-            <key type="filename">select.png</key>
-            <key type="filename">sink.png</key>
-            <key type="filename">stairs-down.png</key>
-            <key type="filename">stairs-up.png</key>
-            <key type="filename">stove.png</key>
-            <key type="filename">tv.png</key>
-            <key type="filename">wall.png</key>
-            <key type="filename">yellow-door-opened.png</key>
-            <key type="filename">yellow-key.png</key>
+            <key type="filename">bookshelf.png</key>
+            <key type="filename">fridge.png</key>
+            <key type="filename">glass-door-closed.png</key>
+            <key type="filename">steel-door-closed.png</key>
+            <key type="filename">wood-door-closed.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>4,4,8,8</rect>
+                <rect>8,16,16,32</rect>
                 <key>scale9Paddings</key>
-                <rect>4,4,8,8</rect>
+                <rect>8,16,16,32</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">computer-screen.png</key>
+            <key type="filename">wall-tilted-note.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>6,6,12,12</rect>
+                <key>scale9Paddings</key>
+                <rect>6,6,12,12</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">computer-tower.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,6,6,12</rect>
+                <key>scale9Paddings</key>
+                <rect>3,6,6,12</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
             <key type="filename">cpubar.png</key>
+            <key type="filename">diskbar.png</key>
+            <key type="filename">healthbar.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>16,2,32,4</rect>
+                <rect>20,3,40,7</rect>
                 <key>scale9Paddings</key>
-                <rect>16,2,32,4</rect>
+                <rect>20,3,40,7</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -253,26 +265,65 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>3,4,7,9</rect>
+                <rect>2,2,4,4</rect>
                 <key>scale9Paddings</key>
-                <rect>3,4,7,9</rect>
+                <rect>2,2,4,4</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">diskbar.png</key>
+            <key type="filename">large-desk.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>16,3,32,5</rect>
+                <rect>20,8,40,16</rect>
                 <key>scale9Paddings</key>
-                <rect>16,3,32,5</rect>
+                <rect>20,8,40,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">healthbar.png</key>
+            <key type="filename">mug.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,3,7,7</rect>
+                <key>scale9Paddings</key>
+                <rect>3,3,7,7</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">small-desk.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">wall-bookshelf.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,6,16,12</rect>
+                <key>scale9Paddings</key>
+                <rect>8,6,16,12</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">wall-shelf.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -282,43 +333,62 @@
                 <rect>8,2,16,4</rect>
                 <key>scale9Paddings</key>
                 <rect>8,2,16,4</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">wall.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>120,50,240,100</rect>
+                <key>scale9Paddings</key>
+                <rect>120,50,240,100</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">wood-window-closed.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,17</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,17</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>cursor.png</filename>
-            <filename>healthbar.png</filename>
-            <filename>cpubar.png</filename>
-            <filename>diskbar.png</filename>
-            <filename>green-key.png</filename>
-            <filename>yellow-key.png</filename>
-            <filename>red-key.png</filename>
             <filename>blue-key.png</filename>
-            <filename>floor.png</filename>
-            <filename>select.png</filename>
-            <filename>player-1.png</filename>
-            <filename>player-2.png</filename>
-            <filename>stairs-up.png</filename>
-            <filename>stairs-down.png</filename>
-            <filename>red-door-closed.png</filename>
-            <filename>green-door-closed.png</filename>
-            <filename>blue-door-closed.png</filename>
-            <filename>yellow-door-closed.png</filename>
-            <filename>blue-door-opened.png</filename>
-            <filename>green-door-opened.png</filename>
-            <filename>red-door-opened.png</filename>
-            <filename>yellow-door-opened.png</filename>
-            <filename>door-opened.png</filename>
-            <filename>door-closed.png</filename>
-            <filename>rubble.png</filename>
-            <filename>computer.png</filename>
-            <filename>pill.png</filename>
+            <filename>bookshelf.png</filename>
+            <filename>computer-screen.png</filename>
+            <filename>computer-tower.png</filename>
+            <filename>cpubar.png</filename>
+            <filename>cursor.png</filename>
             <filename>disk.png</filename>
-            <filename>stove.png</filename>
-            <filename>tv.png</filename>
-            <filename>sink.png</filename>
+            <filename>diskbar.png</filename>
+            <filename>fridge.png</filename>
+            <filename>glass-door-closed.png</filename>
+            <filename>green-key.png</filename>
+            <filename>healthbar.png</filename>
+            <filename>large-desk.png</filename>
+            <filename>mug.png</filename>
+            <filename>pill.png</filename>
+            <filename>red-key.png</filename>
+            <filename>small-desk.png</filename>
+            <filename>steel-door-closed.png</filename>
+            <filename>wall-bookshelf.png</filename>
+            <filename>wall-note.png</filename>
+            <filename>wall-shelf.png</filename>
+            <filename>wall-tilted-note.png</filename>
+            <filename>wood-door-closed.png</filename>
+            <filename>wood-window-closed.png</filename>
             <filename>wall.png</filename>
         </array>
         <key>ignoreFileList</key>

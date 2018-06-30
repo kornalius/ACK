@@ -1,77 +1,28 @@
 const { DoorItem } = require('../../classes/item/door-item')
 
 
-const { ITEM_DOOR } = require('../../constants')
+const { WOOD_DOOR } = require('../../constants')
 
-class Door extends DoorItem {
+class WoodDoor extends DoorItem {
 
-  get name () { return (this.opened ? 'Opened' : 'Closed') + ' Door' }
+  get material () { return 'wood' }
 
-  get type () { return ITEM_DOOR }
-
-  get spriteFrame () { return 'door-' + (this.opened ? 'opened' : 'closed') + '.png' }
-
-  get blocked () { return false }
+  get type () { return WOOD_DOOR }
 
 }
 
 
-const { BLUE_DOOR, BLUE_KEY } = require('../../constants')
+const { GLASS_DOOR } = require('../../constants')
 
-class BlueDoor extends DoorItem {
+class GlassDoor extends DoorItem {
 
-  get color () { return 'blue' }
+  get material () { return 'glass' }
 
-  get type () { return BLUE_DOOR }
-
-  get useWithType () { return BLUE_KEY }
+  get type () { return GLASS_DOOR }
 
 }
-
-
-const { RED_DOOR, RED_KEY } = require('../../constants')
-
-class RedDoor extends DoorItem {
-
-  get color () { return 'red' }
-
-  get type () { return RED_DOOR }
-
-  get useWithType () { return RED_KEY }
-
-}
-
-
-const { GREEN_DOOR, GREEN_KEY } = require('../../constants')
-
-class GreenDoor extends DoorItem {
-
-  get color () { return 'green' }
-
-  get type () { return GREEN_DOOR }
-
-  get useWithType () { return GREEN_KEY }
-
-}
-
-
-const { YELLOW_DOOR, YELLOW_KEY } = require('../../constants')
-
-class YellowDoor extends DoorItem {
-
-  get color () { return 'yellow' }
-
-  get type () { return YELLOW_DOOR }
-
-  get useWithType () { return YELLOW_KEY }
-
-}
-
 
 module.exports = {
-  Door,
-  BlueDoor,
-  RedDoor,
-  GreenDoor,
-  YellowDoor,
+  WoodDoor,
+  GlassDoor,
 }

@@ -1,6 +1,6 @@
 const { Scene } = require('../../classes/core/scene')
 
-let EndScene = class EndScene extends Scene {
+class EndScene extends Scene {
 
   constructor () {
     super()

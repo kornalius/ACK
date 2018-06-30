@@ -85,8 +85,8 @@ let Cursor = class Cursor extends mix(Object).with(EventsManager, SpriteMixin, S
   moveTo (x, y) {
     let video = ACK.video
 
-    x = Math.trunc(Math.min(video.width - this._originX - this._sprite.width, Math.max(this._originX, x)))
-    y = Math.trunc(Math.min(video.height - this._originY - this._sprite.height, Math.max(this._originY, y)))
+    x = Math.trunc(Math.min(video.width - this._originX, Math.max(this._originX, x)))
+    y = Math.trunc(Math.min(video.height - this._originY, Math.max(this._originY, y)))
 
     this._x = x
     this._y = y

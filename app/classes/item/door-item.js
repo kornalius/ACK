@@ -2,25 +2,24 @@ const { ActivableItem } = require('./activable-item')
 const { OpenerMixin } = require('../../mixins/core/opener')
 const { LockerMixin } = require('../../mixins/core/locker')
 const { UsableWithMixin } = require('../../mixins/item/usable-with')
-const { ITEM_DOOR } = require('../../constants')
+
+const { DOOR } = require('../../constants')
 
 class DoorItem extends mix(ActivableItem).with(OpenerMixin, LockerMixin, UsableWithMixin) {
 
   get isDoor () { return true }
 
-  get color () { return '' }
+  get type () { return DOOR }
 
-  get name () { return _.upperFirst(this.color) + ' ' + (this.opened ? 'Opened' : 'Closed') + ' Door' }
+  get color () { return undefined }
 
-  get type () { return ITEM_DOOR }
+  get material () { return undefined }
 
-  get spriteFrame () { return this.color + '-door-' + (this.opened ? 'opened' : 'closed') + '.png' }
+  get name () { return _.upperFirst((this.color ? this.color + ' ' : '') + (this.material ? this.material + ' ' : '') + (this.opened ? 'opened' : 'closed') + ' door') }
+
+  get spriteFrame () { return (this.color ? this.color + '-' : '') + (this.material ? this.material + '-' : '') + 'door-' + (this.opened ? 'opened' : 'closed') + '.png' }
 
   get blocked () { return !this.opened }
-
-  get sightBlocked () { return !this.opened }
-
-  get lightBlocked () { return !this.opened }
 
   useWith (amount = 1, source) {
     return this.unlock()
@@ -29,9 +28,6 @@ class DoorItem extends mix(ActivableItem).with(OpenerMixin, LockerMixin, UsableW
   activate (npc) {
     if (this.isUnlocked && !this.isOpened) {
       this.open(npc)
-      if (npc.hasSight) {
-        npc.updateFov()
-      }
     }
   }
 

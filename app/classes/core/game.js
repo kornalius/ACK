@@ -1,5 +1,4 @@
 const utils = require('../../utils')
-const ROT = require('rot-js')
 
 const { EventsManager } = require('../../mixins/common/events')
 const { StateMixin } = require('../../mixins/common/state')
@@ -31,23 +30,18 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   constructor () {
     super()
 
-    this._ticks = []
+    _.addProp(this, 'scheduler', new Scheduler(), true)
+    _.addProp(this, 'actionManager', new ActionManager(), true)
+    _.addProp(this, 'video', new Video(), true)
+    _.addProp(this, 'cursor', new Cursor(), true)
+    _.addProp(this, 'words', new Words(), true)
+    _.addProp(this, 'scene', undefined)
+    _.addProp(this, 'scenes', {}, true)
+    _.addProp(this, 'ticks', [], true)
+    _.addProp(this, 'pauseInput', false)
 
-    this._scheduler = new Scheduler()
-    this._actionManager = new ActionManager()
-    this._video = new Video()
-    this._cursor = new Cursor()
-
-    this._scene = undefined
-    this._scenes = {}
-
-    this._words = new Words()
-
-    this._ticks = []
     this._tickBound = this.tick.bind(this)
     PIXI.ticker.shared.add(this._tickBound)
-
-    this._pauseInput = false
 
     this.load(this.start)
   }
@@ -81,25 +75,7 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   get stringToKey () { return utils.stringToKey }
   get keyevent () { return utils.keyevent }
 
-  get ROT () { return ROT }
-
-  get ticks () { return this._ticks }
-
-  get player () { return this._player }
-  get video () { return this._video }
-  get scheduler () { return this._scheduler }
-
-  get scene () { return this._scene }
-  get scenes () { return this._scenes }
-
-  get words () { return this._words }
-
-  get pauseInput () { return this._pauseInput }
-  set pauseInput (value) {
-    if (value !== this._pauseInput) {
-      this._pauseInput = value
-    }
-  }
+  get cursorPos () { return new PIXI.Point(this._cursor.sprite.position.x, this._cursor.sprite.position.y) }
 
   font (name) {
     return getFont(name)
@@ -108,12 +84,11 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
   start () {
     if (this.isStopped) {
       this._actionManager.start()
+      this._cursor.start()
 
       this.actSpeed = 100
 
       this._player = new Player()
-
-      this._cursor.start()
 
       super.start()
 
@@ -155,13 +130,18 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
     if (this._scene) {
       this._scene.destroy()
-      this._scene = undefined
+      this.scene = undefined
     }
 
     if (this._words) {
       this._words.destroy()
       this._words = undefined
     }
+
+    for (let key in this._scenes) {
+      this._scene[key].destroy()
+    }
+    this._scenes = {}
 
     this._ticks = []
     this._tickBound = undefined
@@ -195,8 +175,8 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
 
       TWEEN.update()
 
-      for (let tt of this._ticks) {
-        tt.tick(t, delta)
+      for (let tick of this._ticks) {
+        tick.tick(t, delta)
       }
 
       this._player.tick(t, delta)
@@ -214,18 +194,18 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     super.act(t, delta)
 
     if (!this._pauseInput) {
-      if (key.isPressed('left')) {
-        this._player.moveBy(-1, 0)
-      }
-      else if (key.isPressed('right')) {
-        this._player.moveBy(1, 0)
-      }
-      else if (key.isPressed('up')) {
-        this._player.moveBy(0, -1)
-      }
-      else if (key.isPressed('down')) {
-        this._player.moveBy(0, 1)
-      }
+      // if (key.isPressed('left')) {
+      //   this._player.moveBy(-1, 0)
+      // }
+      // else if (key.isPressed('right')) {
+      //   this._player.moveBy(1, 0)
+      // }
+      // else if (key.isPressed('up')) {
+      //   this._player.moveBy(0, -1)
+      // }
+      // else if (key.isPressed('down')) {
+      //   this._player.moveBy(0, 1)
+      // }
     }
   }
 
@@ -240,7 +220,7 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
         s.start()
       })
 
-      this._scene = s
+      this.scene = s
     }
   }
 
@@ -248,7 +228,23 @@ class Game extends mix(Object).with(EventsManager, StateMixin, ActMixin) {
     PIXI.loader
       .add('../static/sprites/sprites.json')
       .load(async () => {
-        loadFonts().then(cb.bind(this))
+        loadFonts().then(() => {
+          const { Wall } = require('../../game/items/wall')
+          const { WoodDoor, GlassDoor } = require('../../game/items/doors')
+          const { WoodWindow } = require('../../game/items/windows')
+
+          this.Wall = Wall
+
+          this.Doors = {
+            WoodDoor, GlassDoor
+          }
+
+          this.Windows = {
+            WoodWindow,
+          }
+
+          cb.call(this)
+        })
       })
   }
 

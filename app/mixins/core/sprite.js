@@ -8,6 +8,11 @@ const SpriteMixin = Mixin(superclass => class SpriteMixin extends superclass {
 
   get isSprite () { return true }
 
+  get bounds () {
+    let s = this._sprite
+    return new PIXI.Rectangle(s.position.x, s.position.y, s.width, s.height)
+  }
+
   resetSprite () {
     this.destroySprite()
   }

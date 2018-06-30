@@ -1,63 +1,54 @@
+const { VIDEO_WIDTH, VIDEO_HEIGHT } = require('../../constants')
+
 const PositionMixin = Mixin(superclass => class PositionMixin extends superclass {
 
-  constructor (x, y, z, map) {
-    super(...arguments)
-
-    this._x = 0
-    this._y = 0
-    this._z = 0
-    this._map = undefined
-
-    this.moveTo(x, y, z, map, false)
-  }
-
-  get x () { return this._x }
+  get x () { return _.get(this, 'sprite.position.x', 0) }
   set x (value) {
-    if (value !== this._x) {
-      let old = this._x
-      this._x = value
+    if (value !== this.x && this._sprite) {
+      let old = this.x
+      this._sprite.position.x = value
       this.emit('x-change', { value, old })
+      ACK.update()
     }
   }
 
-  get y () { return this._y }
+  get y () { return _.get(this, 'sprite.position.y', 0) }
   set y (value) {
-    if (value !== this._y) {
-      let old = this._y
-      this._y = value
+    if (value !== this.y && this._sprite) {
+      let old = this.y
+      this._sprite.position.y = value
       this.emit('y-change', { value, old })
+      ACK.update()
     }
   }
 
-  get z () { return this._z }
-  set z (value) {
-    if (value !== this._z) {
-      let old = this._z
-      this._z = value
-      this.emit('z-change', { value, old })
+  get room () { return this._room }
+  set room (value) {
+    if (value !== this._room) {
+      let old = this._room
+      this._room = value
+      this.emit('room-change', { value, old })
+      ACK.update()
     }
   }
 
-  get map () { return this._map }
-  set map (value) {
-    if (value !== this._map) {
-      let old = this._map
-      this._map = value
-      this.emit('map-change', { value, old })
-    }
-  }
-
-  placeSprite (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
+  placeSprite (x = this.x, y = this.y, room = this.room, animate = this.animateMove) {
     if (this._sprite) {
-      if (!this._sprite.parent || z !== this._z || map !== this._map) {
+      if (!this._sprite.parent || room !== this._room) {
         if (this._sprite.parent) {
           this._sprite.parent.removeChild(this._sprite)
-          this._map.update()
         }
-        if (map && map.hasLevel(z)) {
-          map.levels[z].addChild(this._sprite)
-          map.update()
+
+        if (room) {
+          room.container.addChild(this._sprite)
         }
+
+        if (this._room) {
+          this._room.update()
+        }
+        room.update()
+
+        this.room = room
       }
 
       if (animate) {
@@ -67,9 +58,6 @@ const PositionMixin = Mixin(superclass => class PositionMixin extends superclass
           .easing(TWEEN.Easing.Linear.None)
           .onUpdate(() => {
             this._sprite.position.set(coords.x, coords.y)
-            if (this.isPlayer) {
-              this._map.centerOn(coords.x, coords.y, false)
-            }
             ACK.update()
           })
           .start()
@@ -80,49 +68,62 @@ const PositionMixin = Mixin(superclass => class PositionMixin extends superclass
     }
   }
 
-  canMoveTo (x = this._x, y = this._y, z = this._z, map = this._map) {
-    return map && map.hasLevel(z)
+  canMoveTo (x = this.x, y = this.y, room = this.room) {
+    return !_.isUndefined(room)
   }
 
-  moveTo (x = this._x, y = this._y, z = this._z, map = this._map, animate = this.animateMove) {
-    if (this.canMoveTo(x, y, z, map)) {
-      this.x = x
-      this.y = y
-
-      this.placeSprite(this._x, this._y, z, map, animate)
-
-      this.map = map
-      this.z = z
-
+  moveTo (x = this.x, y = this.y, room = this.room, animate = this.animateMove) {
+    if (this.canMoveTo(x, y, room)) {
+      this.placeSprite(x, y, room, animate)
       return true
     }
     return false
   }
 
-  moveBy (x, y, z = 0, animate = this.animateMove) {
-    return this.moveTo(this._x + x, this._y + y, this._z + z, this._map, animate)
+  moveBy (x = 0, y = 0, animate = this.animateMove) {
+    return this.moveTo(this.x + x, this.y + y, this.room, animate)
   }
 
   updateSpriteFrame () {
-    this.updateSprite(this._spriteFrame)
+    this.updateSprite(this.spriteFrame)
     ACK.update()
   }
 
   distanceFrom (target) {
-    if (this._map === target._map && this._z === target.z) {
-      return new PIXI.Point(this._x, this._y).distance(new PIXI.Point(target.x, target.y))
+    if (this.room === target.room) {
+      return new PIXI.Point(this.x, this.y).distance(new PIXI.Point(target.x, target.y))
     }
     return NaN
   }
 
-  isAt (x = this._x, y = this._y, z = this._z, map = this._map) {
-    return this._x === x && this._y === y && this._z === z && this._map === map
+  isAt (x = this.x, y = this.y, room = this.room) {
+    return this.x === x && this.y === y && this.room === room
   }
 
   centerOn (animate = true) {
-    if (this._map) {
-      this._map.centerOn(this._x, this._y, animate)
+    if (this.room) {
+      this.room.centerOn(this.x, this.y, animate)
     }
+  }
+
+  center (horizontal = true, vertical = true) {
+    let b = this.bounds
+    let mx = Math.trunc(b.width / 2)
+    let my = Math.trunc(b.height / 2)
+    let w = VIDEO_WIDTH
+    let h = VIDEO_HEIGHT
+    let vmx = Math.trunc(w / 2)
+    let vmy = Math.trunc(h / 2)
+
+    if (horizontal) {
+      this._sprite.position.x = vmx - mx
+    }
+
+    if (vertical) {
+      this._sprite.position.y = vmy - my
+    }
+
+    ACK.update()
   }
 
 })
