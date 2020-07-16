@@ -14,7 +14,7 @@
     "fs-promise": "^2.0.2",
     "is_js": "^0.9.0",
     "keymaster": "^1.6.2",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "mixwith": "^0.1.1",
     "performance-now": "^2.1.0",
     "pixi.js": "^4.8.1",
